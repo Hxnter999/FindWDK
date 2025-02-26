@@ -22,16 +22,10 @@
 #
 #   find_package(WDK REQUIRED)
 #
-#   wdk_add_library(KmdfCppLib STATIC KMDF 1.15
-#       KmdfCppLib.h
-#       KmdfCppLib.cpp
-#       )
-#   target_include_directories(KmdfCppLib INTERFACE .)
-#
 #   wdk_add_driver(KmdfCppDriver KMDF 1.15
 #       Main.cpp
 #       )
-#   target_link_libraries(KmdfCppDriver KmdfCppLib)
+#   target_link_libraries(KmdfCppDriver WDK::HAL)
 #
 
 if(DEFINED ENV{WDKContentRoot})
@@ -82,11 +76,21 @@ endif()
 message(STATUS "WDK_ROOT: " ${WDK_ROOT})
 message(STATUS "WDK_VERSION: " ${WDK_VERSION})
 
+foreach(_dir ${CMAKE_MODULE_PATH})
+    if(EXISTS "${_dir}/FindWDK.cmake")
+        set(FINDWDK_DIR "${_dir}")
+        message(STATUS "FINDWDK_DIR found: ${FINDWDK_DIR}")
+        break()
+    endif()
+endforeach()
+
+if(NOT DEFINED FINDWDK_DIR)
+    message(WARNING "Failed to find FindWDK.cmake in CMAKE_MODULE_PATH! Did you add the correct directory to CMAKE_MODULE_PATH?")
+endif()
+
+
 set(WDK_WINVER "0x0601" CACHE STRING "Default WINVER for WDK targets")
 set(WDK_NTDDI_VERSION "" CACHE STRING "Specified NTDDI_VERSION for WDK targets if needed")
-
-set(WDK_ADDITIONAL_FLAGS_FILE "${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/wdkflags.h")
-file(WRITE ${WDK_ADDITIONAL_FLAGS_FILE} "#pragma runtime_checks(\"suc\", off)")
 
 set(WDK_COMPILE_FLAGS
     "-fmerge-all-constants"
@@ -94,6 +98,22 @@ set(WDK_COMPILE_FLAGS
     "-fno-exceptions"
     "-ffreestanding"
     "-fno-stack-protector"
+    "-fno-stack-check"
+    "-mno-stack-arg-probe"
+    "-mstack-alignment=16"
+
+    "-Wall"
+    "-Wextra"
+    "-Wpedantic"
+    "-Wshadow"
+    "-Wconversion"
+    "-Wsign-conversion"
+    "-Wpointer-arith"
+    "-Wstrict-overflow=5"
+    "-Wnull-dereference"
+    "-Wformat=2"
+    "-Wcast-align"
+    "-Wstrict-aliasing=2"
 )
 
 set(WDK_COMPILE_DEFINITIONS "WINNT=1")
@@ -113,7 +133,8 @@ string(CONCAT WDK_LINK_FLAGS
     "-nostdlib "
     "-nodefaultlibs "
     "-Wl,--subsystem=native "
-    "-Wl,-e,DriverEntry"
+    "-Wl,-e,DriverEntry "
+    "-Wl,--stack=16384 "
 )
 
 # Generate imported targets for WDK lib files
@@ -144,6 +165,7 @@ function(wdk_add_driver _target)
         "${WDK_ROOT}/Include/${WDK_INC_VERSION}/shared"
         "${WDK_ROOT}/Include/${WDK_INC_VERSION}/km"
         "${WDK_ROOT}/Include/${WDK_INC_VERSION}/km/crt"
+        "${FINDWDK_DIR}/include"
     )
 
     target_link_libraries(${_target} WDK::NTOSKRNL WDK::HAL WDK::WMILIB)
