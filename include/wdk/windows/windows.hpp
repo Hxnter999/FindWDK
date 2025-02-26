@@ -9,8 +9,8 @@ namespace win {
     }
 
     template <typename ...Ts>
-    ALWAYS_INLINE ntstatus dbg_printex(const char* fmt, Ts&&... args) { 
-        return DbgPrintEx(0, 0, fmt, std::forward<Ts>(args)...);
+    ALWAYS_INLINE ntstatus dbg_printex(std::uint32_t component_id, std::uint32_t level, const char* fmt, Ts&&... args) { 
+        return DbgPrintEx(component_id, level, fmt, std::forward<Ts>(args)...);
     }
     
 } // namespace win
