@@ -89,15 +89,12 @@ set(WDK_ADDITIONAL_FLAGS_FILE "${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTOR
 file(WRITE ${WDK_ADDITIONAL_FLAGS_FILE} "#pragma runtime_checks(\"suc\", off)")
 
 set(WDK_COMPILE_FLAGS
-    "/Zp8" # set struct alignment
-    "/GF"  # enable string pooling
-    "/GR-" # disable RTTI
-    "/Gz" # __stdcall by default
-    "/kernel"  # create kernel mode binary
-    "/FIwarning.h" # disable warnings in WDK headers
-    "/FI${WDK_ADDITIONAL_FLAGS_FILE}" # include file to disable RTC
-	"/Oi" # enable intrinsic functions so that you can use functions like _disable or _enable
-    )
+    "-fmerge-all-constants"
+    "-fno-rtti"
+    "-fno-exceptions"
+    "-ffreestanding"
+    "-fno-stack-protector"
+)
 
 set(WDK_COMPILE_DEFINITIONS "WINNT=1")
 set(WDK_COMPILE_DEFINITIONS_DEBUG "MSC_NOOPT;DEPRECATE_DDK_FUNCTIONS=1;DBG=1")
@@ -105,9 +102,6 @@ set(WDK_COMPILE_DEFINITIONS_DEBUG "MSC_NOOPT;DEPRECATE_DDK_FUNCTIONS=1;DBG=1")
 if(CMAKE_SIZEOF_VOID_P EQUAL 4)
     list(APPEND WDK_COMPILE_DEFINITIONS "_X86_=1;i386=1;STD_CALL")
     set(WDK_PLATFORM "x86")
-elseif(CMAKE_SIZEOF_VOID_P EQUAL 8 AND CMAKE_CXX_COMPILER_ARCHITECTURE_ID STREQUAL "ARM64")
-    list(APPEND WDK_COMPILE_DEFINITIONS "_ARM64_;ARM64;_USE_DECLSPECS_FOR_SAL=1;STD_CALL")
-    set(WDK_PLATFORM "arm64")
 elseif(CMAKE_SIZEOF_VOID_P EQUAL 8)
     list(APPEND WDK_COMPILE_DEFINITIONS "_AMD64_;AMD64")
     set(WDK_PLATFORM "x64")
@@ -116,17 +110,11 @@ else()
 endif()
 
 string(CONCAT WDK_LINK_FLAGS
-    "/MANIFEST:NO " #
-    "/DRIVER " #
-    "/OPT:REF " #
-    "/INCREMENTAL:NO " #
-    "/OPT:ICF " #
-    "/SUBSYSTEM:NATIVE " #
-    "/MERGE:_TEXT=.text;_PAGE=PAGE " #
-    "/NODEFAULTLIB " # do not link default CRT
-    "/SECTION:INIT,d " #
-    "/VERSION:10.0 " #
-    )
+    "-nostdlib "
+    "-nodefaultlibs "
+    "-Wl,--subsystem=native "
+    "-Wl,-e,DriverEntry"
+)
 
 # Generate imported targets for WDK lib files
 file(GLOB WDK_LIBRARIES "${WDK_ROOT}/Lib/${WDK_LIB_VERSION}/km/${WDK_PLATFORM}/*.lib")
@@ -167,55 +155,7 @@ function(wdk_add_driver _target)
         target_link_libraries(${_target} WDK::BUFFEROVERFLOWFASTFAILK)
     endif()
 
-    if(CMAKE_CXX_COMPILER_ARCHITECTURE_ID STREQUAL "ARM64")
-        target_link_libraries(${_target} "arm64rt.lib")
-    endif()
-
     if(CMAKE_SIZEOF_VOID_P EQUAL 4)
         target_link_libraries(${_target} WDK::MEMCMP)
-    endif()
-
-    if(DEFINED WDK_KMDF)
-        target_include_directories(${_target} SYSTEM PRIVATE "${WDK_ROOT}/Include/wdf/kmdf/${WDK_KMDF}")
-        target_link_libraries(${_target}
-            "${WDK_ROOT}/Lib/wdf/kmdf/${WDK_PLATFORM}/${WDK_KMDF}/WdfDriverEntry.lib"
-            "${WDK_ROOT}/Lib/wdf/kmdf/${WDK_PLATFORM}/${WDK_KMDF}/WdfLdr.lib"
-            )
-
-        if(CMAKE_SIZEOF_VOID_P EQUAL 4)
-            set_property(TARGET ${_target} APPEND_STRING PROPERTY LINK_FLAGS "/ENTRY:FxDriverEntry@8")
-        elseif(CMAKE_SIZEOF_VOID_P EQUAL 8)
-            set_property(TARGET ${_target} APPEND_STRING PROPERTY LINK_FLAGS "/ENTRY:FxDriverEntry")
-        endif()
-    else()
-        if(CMAKE_SIZEOF_VOID_P EQUAL 4)
-            set_property(TARGET ${_target} APPEND_STRING PROPERTY LINK_FLAGS "/ENTRY:GsDriverEntry@8")
-        elseif(CMAKE_SIZEOF_VOID_P EQUAL 8)
-            set_property(TARGET ${_target} APPEND_STRING PROPERTY LINK_FLAGS "/ENTRY:GsDriverEntry")
-        endif()
-    endif()
-endfunction()
-
-function(wdk_add_library _target)
-    cmake_parse_arguments(WDK "" "KMDF;WINVER;NTDDI_VERSION" "" ${ARGN})
-
-    add_library(${_target} ${WDK_UNPARSED_ARGUMENTS})
-
-    set_target_properties(${_target} PROPERTIES COMPILE_OPTIONS "${WDK_COMPILE_FLAGS}")
-    set_target_properties(${_target} PROPERTIES COMPILE_DEFINITIONS
-        "${WDK_COMPILE_DEFINITIONS};$<$<CONFIG:Debug>:${WDK_COMPILE_DEFINITIONS_DEBUG};>_WIN32_WINNT=${WDK_WINVER}"
-        )
-    if(WDK_NTDDI_VERSION)
-        target_compile_definitions(${_target} PRIVATE NTDDI_VERSION=${WDK_NTDDI_VERSION})
-    endif()
-
-    target_include_directories(${_target} SYSTEM PRIVATE
-        "${WDK_ROOT}/Include/${WDK_INC_VERSION}/shared"
-        "${WDK_ROOT}/Include/${WDK_INC_VERSION}/km"
-        "${WDK_ROOT}/Include/${WDK_INC_VERSION}/km/crt"
-        )
-
-    if(DEFINED WDK_KMDF)
-        target_include_directories(${_target} SYSTEM PRIVATE "${WDK_ROOT}/Include/wdf/kmdf/${WDK_KMDF}")
     endif()
 endfunction()
