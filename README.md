@@ -76,6 +76,7 @@ FindWDK is licensed under the OSI-approved 3-clause BSD license. You can freely 
 - Add clang/gcc support.
 - Remove the ability to include the headers provided by microsoft as they are obviously not compatible with other compilers and otherwise require a lot of things to be setup properly
 - Enforce DriverEntry as an entry, must be user defined.
+- Add a small header library to provide useful intrinsics and declarations from the wdk.
 
 ~~## Version 1.0.2 (TBD)~~
 

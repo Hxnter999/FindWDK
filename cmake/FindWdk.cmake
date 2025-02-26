@@ -140,12 +140,12 @@ function(wdk_add_driver _target)
     if(WDK_NTDDI_VERSION)
         target_compile_definitions(${_target} PRIVATE NTDDI_VERSION=${WDK_NTDDI_VERSION})
     endif()
-
     target_include_directories(${_target} SYSTEM PRIVATE
         "${WDK_ROOT}/Include/${WDK_INC_VERSION}/shared"
         "${WDK_ROOT}/Include/${WDK_INC_VERSION}/km"
         "${WDK_ROOT}/Include/${WDK_INC_VERSION}/km/crt"
-        )
+        "${CMAKE_CURRENT_LIST_DIR}/include"
+    )
 
     target_link_libraries(${_target} WDK::NTOSKRNL WDK::HAL WDK::WMILIB)
 
