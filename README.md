@@ -28,8 +28,8 @@ FindWDK will search for the latest installed Windows Development Kit (WDK) and e
 - `WDK_VERSION` -- the version of the selected WDK
 - `WDK_WINVER` -- the WINVER used for kernel drivers and libraries (default value is `0x0601` and can be changed per target or globally)
 - `WDK_NTDDI_VERSION` -- the NTDDI_VERSION used for kernel drivers and libraries, if not set, the value will be automatically calculated by WINVER
-
-`WDKContentRoot` environment variable overrides the default WDK search path.
+- `FINDWDK_DIR` -- the directory where FindWDK.cmake is located
+- `WDKContentRoot` environment variable overrides the default WDK search path.
 
 ## Kernel driver
 The following command adds a kernel driver target called `<name>` to be built from the source files listed in the command invocation:
@@ -80,10 +80,10 @@ FindWDK is licensed under the OSI-approved 3-clause BSD license. You can freely 
 
 ~~## Version 1.0.2 (TBD)~~
 
-~~## Version 1.0.1 (13 Mar 2018)~~
-~~- New: Add ability to link to WDK libraries~~
-~~- New: Add MinifilterDriver sample~~
-~~- Fix: W4 warnings in C version of the driver, add missing /W4 /WX for C compiler~~
+## ~~Version 1.0.1 (13 Mar 2018)~~
+- ~~New: Add ability to link to WDK libraries~~
+- ~~New: Add MinifilterDriver sample~~
+- ~~Fix: W4 warnings in C version of the driver, add missing /W4 /WX for C compiler~~
 
-~~## Version 1.0.0 (03 Feb 2018)~~
-~~- Initial public release~~
+## ~~Version 1.0.0 (03 Feb 2018)~~
+- ~~Initial public release~~

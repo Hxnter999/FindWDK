@@ -3,6 +3,7 @@
 #include <cstdint>
 #include <utility>
 #include <type_traits>
+#include <concepts>
 
 #define ALWAYS_INLINE __attribute__((always_inline)) inline
 

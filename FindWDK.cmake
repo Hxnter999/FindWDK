@@ -17,7 +17,7 @@
 # - `WDK_NTDDI_VERSION` -- the NTDDI_VERSION used for kernel drivers and libraries,
 #                          if not set, the value will be automatically calculated by WINVER
 #        (default value is left blank and can be changed per target or globally)
-#
+# - `FINDWDK_DIR` -- the directory where FindWDK.cmake is located
 # Example usage:
 #
 #   find_package(WDK REQUIRED)
@@ -164,7 +164,7 @@ function(wdk_add_driver _target)
     target_include_directories(${_target} SYSTEM PRIVATE
         "${WDK_ROOT}/Include/${WDK_INC_VERSION}/shared"
         "${WDK_ROOT}/Include/${WDK_INC_VERSION}/km"
-        "${WDK_ROOT}/Include/${WDK_INC_VERSION}/km/crt"
+        #"${WDK_ROOT}/Include/${WDK_INC_VERSION}/km/crt"
         "${FINDWDK_DIR}/include"
     )
 
