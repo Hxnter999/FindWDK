@@ -13,6 +13,9 @@ namespace win {
     void ExFreePool(void* pool_address);
     std::uint64_t KeSetSystemAffinityThreadEx(std::uint64_t affinity);
     void KeRevertToUserAffinityThreadEx(std::uint64_t affinity);
+    std::uint64_t MmGetPhysicalAddress(std::uint64_t virtual_address);
+    std::uint64_t MmGetVirtualForPhysical(std::uint64_t physical_address);
+
 
     END_EXTERN_C 
 } // namespace win

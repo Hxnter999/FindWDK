@@ -36,6 +36,7 @@
 // custom helper types
 namespace win {
 
+
 } // namespace win
 
 #endif // WDK_UTILS_HPP

@@ -2,10 +2,10 @@
 
 extern "C"
 ntstatus DriverEntry(PDRIVER_OBJECT driver_object, PUNICODE_STRING) {
-    win::dbg_print("Processor count: %u\n", win::KeQueryActiveProcessorCount());
+    win::print("Processor count: %u\n", win::KeQueryActiveProcessorCount());
 
     driver_object->DriverUnload = [](PDRIVER_OBJECT) static {
-        win::dbg_print("DriverUnload\n");
+        win::print("DriverUnload\n");
         return ntstatus::success;
     };
 

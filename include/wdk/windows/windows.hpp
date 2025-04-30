@@ -5,12 +5,12 @@
 
 namespace win {
     template <typename ...Ts>
-    ALWAYS_INLINE ntstatus dbg_print(const char* fmt, Ts&&... args) {
+    ALWAYS_INLINE ntstatus print(const char* fmt, Ts&&... args) {
         return DbgPrint(fmt, std::forward<Ts>(args)...);
     }
 
     template <typename ...Ts>
-    ALWAYS_INLINE ntstatus dbg_print_ex(std::uint32_t component_id, std::uint32_t level, const char* fmt, Ts&&... args) {
+    ALWAYS_INLINE ntstatus print_ex(std::uint32_t component_id, std::uint32_t level, const char* fmt, Ts&&... args) {
         return DbgPrintEx(component_id, level, fmt, std::forward<Ts>(args)...);
     }
 
