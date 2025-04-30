@@ -4,8 +4,7 @@
 #include "amd.hpp"
 #include "intel.hpp"
 
-namespace intrin
-{
+namespace intrin {
     ALWAYS_INLINE void halt() {
         asm volatile(
             "hlt"
@@ -61,7 +60,7 @@ namespace intrin
     ALWAYS_INLINE void wrmsr(const std::uint32_t msr, const std::uint64_t value) {
         std::uint32_t low = static_cast<std::uint32_t>(value);
         std::uint32_t high = static_cast<std::uint32_t>(value >> 32);
-    
+
         asm volatile (
             "wrmsr"
             :: "c"(msr), "a"(low), "d"(high)
@@ -69,7 +68,7 @@ namespace intrin
         );
     }
 
-    ALWAYS_INLINE void invlpg(const void* address) {
+    ALWAYS_INLINE void invlpg(const void *address) {
         asm volatile(
             "invlpg (%0)"
             :: "r"(address)
@@ -107,6 +106,54 @@ namespace intrin
         return (static_cast<std::uint64_t>(high) << 32) | low;
     }
 
+    ALWAYS_INLINE std::uint64_t read_cr0() {
+        std::uint64_t value;
+        asm volatile("mov %%cr0, %0" : "=r"(value));
+        return value;
+    }
 
+    ALWAYS_INLINE std::uint64_t read_cr2() {
+        std::uint64_t value;
+        asm volatile("mov %%cr2, %0" : "=r"(value));
+        return value;
+    }
+
+    ALWAYS_INLINE std::uint64_t read_cr3() {
+        std::uint64_t value;
+        asm volatile("mov %%cr3, %0" : "=r"(value));
+        return value;
+    }
+
+    ALWAYS_INLINE std::uint64_t read_cr4() {
+        std::uint64_t value;
+        asm volatile("mov %%cr4, %0" : "=r"(value));
+        return value;
+    }
+
+    ALWAYS_INLINE std::uint64_t read_cr8() {
+        std::uint64_t value;
+        asm volatile("mov %%cr8, %0" : "=r"(value));
+        return value;
+    }
+
+    ALWAYS_INLINE void write_cr0(std::uint64_t value) {
+        asm volatile("mov %0, %%cr0" :: "r"(value) : "memory");
+    }
+
+    ALWAYS_INLINE void write_cr2(std::uint64_t value) {
+        asm volatile("mov %0, %%cr2" :: "r"(value));
+    }
+
+    ALWAYS_INLINE void write_cr3(std::uint64_t value) {
+        asm volatile("mov %0, %%cr3" :: "r"(value) : "memory");
+    }
+
+    ALWAYS_INLINE void write_cr4(std::uint64_t value) {
+        asm volatile("mov %0, %%cr4" :: "r"(value) : "memory");
+    }
+
+    ALWAYS_INLINE void write_cr8(std::uint64_t value) {
+        asm volatile("mov %0, %%cr8" :: "r"(value) : "memory");
+    }
 } // namespace intrin
 #endif // WDK_INTRINSICS_HPP
