@@ -69,6 +69,7 @@ target_link_libraries(MinifilterDriver WDK::FLTMGR)
 
 # License
 FindWDK is licensed under the OSI-approved 3-clause BSD license. You can freely use it in your commercial or opensource software.
+Additional components added by Hxnter999 are licensed under the MIT License, unless otherwise specified.
 
 # Version history
 ## Version 2.0.0
