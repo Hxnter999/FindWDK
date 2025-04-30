@@ -1,3 +1,4 @@
+// reworked windows types
 #ifndef WDK_TYPES_HPP
 #define WDK_TYPES_HPP
 #include "../utils.hpp"
@@ -1803,6 +1804,35 @@ enum class ntstatus : std::uint32_t {
     xml_parse_error = 0xc000a083,
     xmldsig_error = 0xc000a084,
 };
+
+namespace pool_type {
+    enum values
+    {
+        NonPagedPool,
+        NonPagedPoolExecute = NonPagedPool,
+        PagedPool,
+        NonPagedPoolMustSucceed = NonPagedPool + 2,
+        DontUseThisType,
+        NonPagedPoolCacheAligned = NonPagedPool + 4,
+        PagedPoolCacheAligned,
+        NonPagedPoolCacheAlignedMustS = NonPagedPool + 6,
+        MaxPoolType,
+        NonPagedPoolBase = 0,
+        NonPagedPoolBaseMustSucceed = NonPagedPoolBase + 2,
+        NonPagedPoolBaseCacheAligned = NonPagedPoolBase + 4,
+        NonPagedPoolBaseCacheAlignedMustS = NonPagedPoolBase + 6,
+        NonPagedPoolSession = 32,
+        PagedPoolSession = NonPagedPoolSession + 1,
+        NonPagedPoolMustSucceedSession = PagedPoolSession + 1,
+        DontUseThisTypeSession = NonPagedPoolMustSucceedSession + 1,
+        NonPagedPoolCacheAlignedSession = DontUseThisTypeSession + 1,
+        PagedPoolCacheAlignedSession = NonPagedPoolCacheAlignedSession + 1,
+        NonPagedPoolCacheAlignedMustSSession = PagedPoolCacheAlignedSession + 1,
+        NonPagedPoolNx = 512,
+        NonPagedPoolNxCacheAligned = NonPagedPoolNx + 4,
+        NonPagedPoolSessionNx = NonPagedPoolNx + 32,
+    };
+}
 
 struct UNICODE_STRING {
     std::uint16_t Length;

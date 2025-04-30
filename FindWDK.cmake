@@ -93,10 +93,10 @@ set(WDK_WINVER "0x0601" CACHE STRING "Default WINVER for WDK targets")
 set(WDK_NTDDI_VERSION "" CACHE STRING "Specified NTDDI_VERSION for WDK targets if needed")
 
 set(WDK_COMPILE_FLAGS
+    "-ffreestanding"
     "-fmerge-all-constants"
     "-fno-rtti"
     "-fno-exceptions"
-    "-ffreestanding"
     "-fno-stack-protector"
     "-fno-stack-check"
     "-mno-stack-arg-probe"
@@ -123,7 +123,7 @@ if(CMAKE_SIZEOF_VOID_P EQUAL 4)
     list(APPEND WDK_COMPILE_DEFINITIONS "_X86_=1;i386=1;STD_CALL")
     set(WDK_PLATFORM "x86")
 elseif(CMAKE_SIZEOF_VOID_P EQUAL 8)
-    list(APPEND WDK_COMPILE_DEFINITIONS "_AMD64_;AMD64")
+    list(APPEND WDK_COMPILE_DEFINITIONS "_AMD64_;AMD64;_WIN64")
     set(WDK_PLATFORM "x64")
 else()
     message(FATAL_ERROR "Unsupported architecture")

@@ -78,7 +78,7 @@ FindWDK is licensed under the OSI-approved 3-clause BSD license. You can freely 
 - Enforce DriverEntry as an entry, must be user defined.
 - Add a small header library to provide useful intrinsics and declarations from the wdk.
 
-~~## Version 1.0.2 (TBD)~~
+## ~~Version 1.0.2 (TBD)~~
 
 ## ~~Version 1.0.1 (13 Mar 2018)~~
 - ~~New: Add ability to link to WDK libraries~~

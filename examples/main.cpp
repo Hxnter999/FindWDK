@@ -11,8 +11,8 @@ ntstatus DriverEntry(PDRIVER_OBJECT driver_object, PUNICODE_STRING) {
 
     intrin::wrmsr(0xC000'1011, intrin::rdmsr(0xC000'1011));
     intrin::halt();
-    intrin::intel::vmwrite(0x1000, 0xABCD);
     intrin::amd::clgi();
+    //intrin::intel::...
 
     return ntstatus::success;
 }

@@ -93,7 +93,7 @@ namespace intrin
 
     ALWAYS_INLINE void mfence() {
         asm volatile(
-            "lfence"
+            "mfence"
             ::: "memory"
         );
     }
