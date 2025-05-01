@@ -23,6 +23,8 @@ namespace win {
 
     std::uint64_t MmGetVirtualForPhysical(std::uint64_t physical_address);
 
+    unsigned char MmIsAddressValid(void* virtual_address);
+
 
     END_EXTERN_C
 } // namespace win
