@@ -7,8 +7,8 @@ namespace arch {
         return intrin::rdmsr(T::number);
     }
 
-    struct efer : win::aliasable_bitfield<efer, std::uint64_t> {
-        using win::aliasable_bitfield<efer, std::uint64_t>::aliasable_bitfield;
+    struct efer : win::scalar_convertible<efer, std::uint64_t> {
+        using win::scalar_convertible<efer, std::uint64_t>::scalar_convertible;
         static constexpr std::uint32_t number = 0xC000'0080;
 
         std::uint64_t syscall_extensions: 1;
@@ -31,8 +31,8 @@ namespace arch {
     };
 
     // virtual machine host save physical address as per the manual
-    struct vmhs_pa : win::aliasable_bitfield<vmhs_pa, std::uint64_t> {
-        using win::aliasable_bitfield<vmhs_pa, std::uint64_t>::aliasable_bitfield;
+    struct vmhs_pa : win::scalar_convertible<vmhs_pa, std::uint64_t> {
+        using win::scalar_convertible<vmhs_pa, std::uint64_t>::scalar_convertible;
         static constexpr uint32_t number = 0xC001'0117;
 
         std::uint64_t value{};

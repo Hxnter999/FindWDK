@@ -18,10 +18,10 @@
 // custom helper types
 namespace win {
     template<typename Derived, typename Alias>
-    struct aliasable_bitfield {
-        aliasable_bitfield() = default;
+    struct scalar_convertible {
+        scalar_convertible() = default;
 
-        aliasable_bitfield(const Alias &v) {
+        scalar_convertible(const Alias &v) {
             assign_from(v);
         }
 

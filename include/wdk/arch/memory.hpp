@@ -5,10 +5,10 @@ namespace arch {
     template<typename T>
     concept is_address = std::is_pointer_v<T> || (std::is_integral_v<T> && sizeof(T) == 8);
 
-    struct address : win::aliasable_bitfield<address, std::uint64_t>,
-                     win::aliasable_bitfield<address, void *> {
-        using win::aliasable_bitfield<address, std::uint64_t>::aliasable_bitfield;
-        using win::aliasable_bitfield<address, void *>::aliasable_bitfield;
+    struct address : win::scalar_convertible<address, std::uint64_t>,
+                     win::scalar_convertible<address, void *> {
+        using win::scalar_convertible<address, std::uint64_t>::scalar_convertible;
+        using win::scalar_convertible<address, void *>::scalar_convertible;
 
         std::uint64_t offset: 12;
         std::uint64_t p1_index: 9;
