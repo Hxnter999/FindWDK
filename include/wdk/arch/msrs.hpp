@@ -2,12 +2,7 @@
 #define WDK_ARCH_MSRS_HPP
 
 namespace arch {
-    template <typename T>
-    concept is_msr = requires {
-        { T::member } -> std::same_as<std::uint32_t>;
-    };
-
-    template <typename T>
+    template<typename T>
     T load_msr() {
         return intrin::rdmsr(T::number);
     }

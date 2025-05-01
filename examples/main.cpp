@@ -14,10 +14,14 @@ ntstatus DriverEntry(PDRIVER_OBJECT driver_object, PUNICODE_STRING) {
     //intrin::intel::...
     intrin::write_cr3(intrin::read_cr3());
 
+    // msr <-> 64 bit integer
     auto efer = arch::load_msr<arch::efer>();
     efer = intrin::rdmsr(arch::efer::number);
 
-    arch::address entrypoint = &DriverEntry;
+    // address <-> 64 bit integer
+    // address <-> void*
+    // address <-| T*
+    arch::address entrypoint{&DriverEntry};
 
     return ntstatus::success;
 }
