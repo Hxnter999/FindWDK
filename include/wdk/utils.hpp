@@ -14,27 +14,31 @@
 #define BEGIN_EXTERN_C extern "C" {
 #define END_EXTERN_C }
 
-#define SCALAR_WRAPPER_MEMBER_FUNCTIONS(struct_name, member_variable) \
-    constexpr struct_name() = default; \
-    constexpr struct_name(const decltype(member_variable)& rhs) : member_variable(rhs) {} \
-    constexpr struct_name& operator=(const decltype(member_variable)& rhs) { \
-        member_variable = rhs; \
-        return *this; \
-    } \
-    constexpr operator decltype(member_variable)() const { return member_variable; } \
-    constexpr explicit operator bool() const { return static_cast<bool>(member_variable); } \
-    constexpr bool operator==(const struct_name& rhs) const { \
-        return member_variable == rhs.member_variable; \
-    } \
-    constexpr bool operator==(const decltype(member_variable)& rhs) const { \
-        return member_variable == rhs; \
-    }
-
-
-
 
 // custom helper types
 namespace win {
+    template<typename Derived, typename Alias>
+    struct aliasable_bitfield {
+        aliasable_bitfield() = default;
+
+        aliasable_bitfield(const Alias &v) {
+            assign_from(v);
+        }
+
+        Derived &operator=(const Alias &v) {
+            return assign_from(v);
+        }
+
+        operator Alias() const {
+            return std::bit_cast<Alias>(*static_cast<const Derived *>(this));
+        }
+
+    private:
+        Derived &assign_from(const Alias &v) {
+            *static_cast<Derived *>(this) = std::bit_cast<Derived>(v);
+            return *static_cast<Derived *>(this);
+        }
+    };
 
 
 } // namespace win

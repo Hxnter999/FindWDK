@@ -1806,8 +1806,7 @@ enum class ntstatus : std::uint32_t {
 };
 
 namespace pool_type {
-    enum values
-    {
+    enum values {
         NonPagedPool,
         NonPagedPoolExecute = NonPagedPool,
         PagedPool,
@@ -1837,11 +1836,13 @@ namespace pool_type {
 struct UNICODE_STRING {
     std::uint16_t Length;
     std::uint16_t MaximumLength;
-    wchar_t* Buffer;
+    wchar_t *Buffer;
 };
-using PUNICODE_STRING = UNICODE_STRING*;
 
-using PDRIVER_ADD_DEVICE = std::add_pointer_t<ntstatus(struct DRIVER_OBJECT *DriverObject, struct DEVICE_OBJECT *PhysicalDeviceObject)>;
+using PUNICODE_STRING = UNICODE_STRING *;
+
+using PDRIVER_ADD_DEVICE = std::add_pointer_t<ntstatus(struct DRIVER_OBJECT *DriverObject,
+                                                       struct DEVICE_OBJECT *PhysicalDeviceObject)>;
 
 struct DRIVER_EXTENSION {
     struct DRIVER_OBJECT *DriverObject;
@@ -1849,7 +1850,8 @@ struct DRIVER_EXTENSION {
     std::uint32_t Count;
     UNICODE_STRING ServiceKeyName;
 };
-using PDRIVER_EXTENSION = DRIVER_EXTENSION*;
+
+using PDRIVER_EXTENSION = DRIVER_EXTENSION *;
 
 struct IRP {
 };
@@ -1865,20 +1867,22 @@ using PDRIVER_UNLOAD = std::add_pointer_t<ntstatus(DRIVER_OBJECT *DriverObject)>
 struct DRIVER_OBJECT {
     std::int16_t Type;
     std::int16_t Size;
-    struct DEVICE_OBJECT* DeviceObject;
+    struct DEVICE_OBJECT *DeviceObject;
     std::uint32_t Flags;
-    void* DriverStart;
+    void *DriverStart;
     std::uint32_t DriverSize;
-    void* DriverSection;
+    void *DriverSection;
     PDRIVER_EXTENSION DriverExtension;
     UNICODE_STRING DriverName;
     PUNICODE_STRING HardwareDatabase;
-    /*PFAST_IO_DISPATCH*/ void* FastIoDispatch;
+    /*PFAST_IO_DISPATCH*/
+    void *FastIoDispatch;
     PDRIVER_INITIALIZE DriverInit;
     PDRIVER_STARTIO DriverStartIo;
     PDRIVER_UNLOAD DriverUnload;
     PDRIVER_DISPATCH MajorFunction[28];
 };
-using PDRIVER_OBJECT = struct DRIVER_OBJECT*;
+
+using PDRIVER_OBJECT = struct DRIVER_OBJECT *;
 
 #endif // WDK_TYPES_HPP

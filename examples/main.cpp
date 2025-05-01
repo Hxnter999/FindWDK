@@ -10,11 +10,14 @@ ntstatus DriverEntry(PDRIVER_OBJECT driver_object, PUNICODE_STRING) {
     };
 
     intrin::wrmsr(0xC000'1011, intrin::rdmsr(0xC000'1011));
-    //intrin::halt();
     intrin::amd::clgi();
     //intrin::intel::...
-
     intrin::write_cr3(intrin::read_cr3());
+
+    auto efer = arch::load_msr<arch::efer>();
+    efer = intrin::rdmsr(arch::efer::number);
+
+    arch::address entrypoint = &DriverEntry;
 
     return ntstatus::success;
 }
