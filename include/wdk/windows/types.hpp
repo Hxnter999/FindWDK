@@ -1885,4 +1885,12 @@ struct DRIVER_OBJECT {
 
 using PDRIVER_OBJECT = struct DRIVER_OBJECT *;
 
+struct LIST_ENTRY {
+    LIST_ENTRY *Flink;
+    LIST_ENTRY *Blink;
+};
+using PLIST_ENTRY = LIST_ENTRY*;
+
+
+
 #endif // WDK_TYPES_HPP
