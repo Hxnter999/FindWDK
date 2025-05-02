@@ -51,7 +51,6 @@ Options:
 - `NTDDI_VERSION <ntddi_version>` -- use specific NTDDI_VERSION
 
 Example:
-
 ```cmake
 wdk_add_driver(KmdfCppDriver 
     KMDF 1.15 
@@ -59,9 +58,14 @@ wdk_add_driver(KmdfCppDriver
     Main.cpp
     )
 ```
+```cmake
+target_link_libraries(KmdfCppDriver WDK::HAL)
+```
 
 ## Linking to WDK libraries
-FindWDK creates imported targets for all WDK libraries. The naming pattern is `WDK::<UPPERCASED_LIBNAME>`. Linking a minifilter driver to `FltMgr.lib` is shown below:
+By default, **FindWDK** links only against `WDK::NTOSKRNL`.
+However, it also generates imported targets for all available WDK libraries, using the naming convention `WDK::<UPPERCASED_LIBNAME>`.
+For example, linking a minifilter driver with `FltMgr.lib` can be done as shown below:
 
 ```cmake
 target_link_libraries(MinifilterDriver WDK::FLTMGR)
@@ -76,7 +80,6 @@ Additional components added by Hxnter999 are licensed under the MIT License, unl
 - Remove msvc support.
 - Add clang/gcc support.
 - Remove the ability to include the headers provided by microsoft as they are obviously not compatible with other compilers and otherwise require a lot of things to be setup properly
-- Enforce DriverEntry as an entry, must be user defined.
 - Add a small header library to provide useful intrinsics and declarations from the wdk.
 
 ## ~~Version 1.0.2 (TBD)~~
