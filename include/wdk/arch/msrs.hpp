@@ -3,7 +3,7 @@
 
 namespace arch {
     template<typename T>
-    T load_msr() {
+    ALWAYS_INLINE T load_msr() {
         return intrin::rdmsr(T::number);
     }
 

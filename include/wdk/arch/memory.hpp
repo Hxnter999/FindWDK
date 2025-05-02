@@ -16,51 +16,51 @@ namespace arch {
         std::uint64_t p4_index: 9;
         std::uint64_t sign: 16;
 
-        address() = default;
+        constexpr address() = default;
 
         template<is_address T>
-        address(T src) {
+        constexpr address(T src) {
             *this = std::bit_cast<address>(src);
         }
 
         template<is_address T>
-        address &operator=(T src) {
+        constexpr address &operator=(T src) {
             *this = std::bit_cast<address>(src);
             return *this;
         }
 
-        operator void *() const { return std::bit_cast<void *>(*this); }
+        constexpr operator void *() const { return std::bit_cast<void *>(*this); }
 
         template<is_address T>
-        explicit operator T() const { return std::bit_cast<T>(*this); }
+        explicit constexpr operator T() const { return std::bit_cast<T>(*this); }
 
-        explicit operator bool() const { return static_cast<bool>(std::bit_cast<std::uint64_t>(*this)); }
+        explicit constexpr operator bool() const { return static_cast<bool>(std::bit_cast<std::uint64_t>(*this)); }
 
-        address operator*() const {
+        constexpr address operator*() const {
             return *static_cast<void **>(*this);
         }
 
-        address operator+(const std::size_t size) const {
+        constexpr address operator+(const std::size_t size) const {
             return static_cast<std::uint64_t>(*this) + size;
         }
 
-        address &operator+=(const std::size_t size) {
+        constexpr address &operator+=(const std::size_t size) {
             return *this = *this + size;
         }
 
-        address operator-(const std::size_t size) const {
+        constexpr address operator-(const std::size_t size) const {
             return static_cast<std::uint64_t>(*this) - size;
         }
 
-        address &operator-=(const std::size_t size) {
+        constexpr address &operator-=(const std::size_t size) {
             return *this = *this - size;
         }
 
-        bool operator==(const address &other) const = default;
+        constexpr bool operator==(const address &other) const = default;
 
-        bool operator!=(const address &other) const = default;
+        constexpr bool operator!=(const address &other) const = default;
 
-        auto operator<=>(const address &other) const = default;
+        constexpr auto operator<=>(const address &other) const = default;
     };
 } // namespace arch
 

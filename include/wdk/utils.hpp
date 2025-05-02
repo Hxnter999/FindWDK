@@ -16,22 +16,22 @@ namespace win {
     // mostly used for bitfields throughout the library, for example MSRs.
     template<typename Derived, typename Alias>
     struct scalar_convertible {
-        scalar_convertible() = default;
+        constexpr scalar_convertible() = default;
 
-        scalar_convertible(const Alias &v) {
+        constexpr scalar_convertible(const Alias &v) {
             assign_from(v);
         }
 
-        Derived &operator=(const Alias &v) {
+        constexpr Derived &operator=(const Alias &v) {
             return assign_from(v);
         }
 
-        operator Alias() const {
+        constexpr operator Alias() const {
             return std::bit_cast<Alias>(*static_cast<const Derived *>(this));
         }
 
     private:
-        Derived &assign_from(const Alias &v) {
+        constexpr Derived &assign_from(const Alias &v) {
             *static_cast<Derived *>(this) = std::bit_cast<Derived>(v);
             return *static_cast<Derived *>(this);
         }

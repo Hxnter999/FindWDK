@@ -1805,33 +1805,36 @@ enum class ntstatus : std::uint32_t {
     xmldsig_error = 0xc000a084,
 };
 
-namespace pool_type {
-    enum values {
-        NonPagedPool,
-        NonPagedPoolExecute = NonPagedPool,
-        PagedPool,
-        NonPagedPoolMustSucceed = NonPagedPool + 2,
-        DontUseThisType,
-        NonPagedPoolCacheAligned = NonPagedPool + 4,
-        PagedPoolCacheAligned,
-        NonPagedPoolCacheAlignedMustS = NonPagedPool + 6,
-        MaxPoolType,
-        NonPagedPoolBase = 0,
-        NonPagedPoolBaseMustSucceed = NonPagedPoolBase + 2,
-        NonPagedPoolBaseCacheAligned = NonPagedPoolBase + 4,
-        NonPagedPoolBaseCacheAlignedMustS = NonPagedPoolBase + 6,
-        NonPagedPoolSession = 32,
-        PagedPoolSession = NonPagedPoolSession + 1,
-        NonPagedPoolMustSucceedSession = PagedPoolSession + 1,
-        DontUseThisTypeSession = NonPagedPoolMustSucceedSession + 1,
-        NonPagedPoolCacheAlignedSession = DontUseThisTypeSession + 1,
-        PagedPoolCacheAlignedSession = NonPagedPoolCacheAlignedSession + 1,
-        NonPagedPoolCacheAlignedMustSSession = PagedPoolCacheAlignedSession + 1,
-        NonPagedPoolNx = 512,
-        NonPagedPoolNxCacheAligned = NonPagedPoolNx + 4,
-        NonPagedPoolSessionNx = NonPagedPoolNx + 32,
-    };
+enum class pool_type {
+    NonPagedPool,
+    NonPagedPoolExecute = NonPagedPool,
+    PagedPool,
+    NonPagedPoolMustSucceed = NonPagedPool + 2,
+    DontUseThisType,
+    NonPagedPoolCacheAligned = NonPagedPool + 4,
+    PagedPoolCacheAligned,
+    NonPagedPoolCacheAlignedMustS = NonPagedPool + 6,
+    MaxPoolType,
+    NonPagedPoolBase = 0,
+    NonPagedPoolBaseMustSucceed = NonPagedPoolBase + 2,
+    NonPagedPoolBaseCacheAligned = NonPagedPoolBase + 4,
+    NonPagedPoolBaseCacheAlignedMustS = NonPagedPoolBase + 6,
+    NonPagedPoolSession = 32,
+    PagedPoolSession = NonPagedPoolSession + 1,
+    NonPagedPoolMustSucceedSession = PagedPoolSession + 1,
+    DontUseThisTypeSession = NonPagedPoolMustSucceedSession + 1,
+    NonPagedPoolCacheAlignedSession = DontUseThisTypeSession + 1,
+    PagedPoolCacheAlignedSession = NonPagedPoolCacheAlignedSession + 1,
+    NonPagedPoolCacheAlignedMustSSession = PagedPoolCacheAlignedSession + 1,
+    NonPagedPoolNx = 512,
+    NonPagedPoolNxCacheAligned = NonPagedPoolNx + 4,
+    NonPagedPoolSessionNx = NonPagedPoolNx + 32
+};
+
+constexpr pool_type operator|(const pool_type lhs, const pool_type rhs) {
+    return static_cast<pool_type>(std::to_underlying(lhs) | std::to_underlying(rhs));
 }
+
 
 struct UNICODE_STRING {
     std::uint16_t Length;
@@ -1891,6 +1894,16 @@ struct LIST_ENTRY {
 };
 
 using PLIST_ENTRY = LIST_ENTRY *;
+
+
+struct OSVERSIONINFO {
+    std::uint32_t OSVersionInfoSize;
+    std::uint32_t MajorVersion;
+    std::uint32_t MinorVersion;
+    std::uint32_t BuildNumber;
+    std::uint32_t PlatformId;
+    wchar_t CSDVersion[128]; // Maintenance string for PSS usage
+};
 
 
 #endif // WDK_TYPES_HPP
