@@ -17,7 +17,7 @@ namespace win {
 
     // functions
     extern "C" {
-    // output parameters are taken by reference when they are expected, pointer otherwise and defaulted if applicable
+    // output parameters are taken by reference when they are expected, taken by a pointer when optional and defaulted if applicable
     ntstatus DbgPrint(const char *fmt, ...);
 
     ntstatus DbgPrintEx(std::uint32_t component_id, std::uint32_t level, const char *fmt, ...);
