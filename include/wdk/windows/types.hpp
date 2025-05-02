@@ -1833,6 +1833,18 @@ namespace pool_type {
     };
 }
 
+enum class mode {
+    KernelMode,
+    UserMode,
+    MaximumMode
+}
+
+enum class lock_operation {
+    IoReadAccess,
+    IoWriteAccess,
+    IoModifyAccess
+}
+
 struct UNICODE_STRING {
     std::uint16_t Length;
     std::uint16_t MaximumLength;
@@ -1890,7 +1902,6 @@ struct LIST_ENTRY {
     LIST_ENTRY *Blink;
 };
 using PLIST_ENTRY = LIST_ENTRY*;
-
 
 
 #endif // WDK_TYPES_HPP
