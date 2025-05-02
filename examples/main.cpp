@@ -19,9 +19,11 @@ ntstatus DriverEntry(PDRIVER_OBJECT driver_object, PUNICODE_STRING) {
     efer = arch::load_msr<arch::efer>();
 
     // address <-> 64 bit integer
-    // address <-> void*
-    // address <-| T*
-    arch::address entrypoint{&efer};
+    // address <-> T* explicitly
+    // address <-> void* implicitly
+    arch::address entrypoint{nullptr};
+    entrypoint = &DriverEntry;
+    win::print_ex(0, 0, "Running from: %p\n", entrypoint);
 
     return ntstatus::success;
 }

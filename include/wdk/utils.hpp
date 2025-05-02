@@ -11,12 +11,9 @@
 #define BEGIN_INTEL_SYNTAX ".intel_syntax noprefix\n\t"
 #define END_INTEL_SYNTAX ".att_syntax\n\t"
 
-#define BEGIN_EXTERN_C extern "C" {
-#define END_EXTERN_C }
-
-
 // custom helper types
 namespace win {
+    // mostly used for bitfields throughout the library, for example MSRs.
     template<typename Derived, typename Alias>
     struct scalar_convertible {
         scalar_convertible() = default;
@@ -39,8 +36,6 @@ namespace win {
             return *static_cast<Derived *>(this);
         }
     };
-
-
 } // namespace win
 
 #endif // WDK_UTILS_HPP
