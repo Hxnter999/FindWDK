@@ -25,6 +25,7 @@ namespace win {
 
     unsigned char MmIsAddressValid(void* virtual_address);
 
+    unsigned char MmIsNonPagedSystemAddressValid(void* virtual_address);
 
     END_EXTERN_C
 } // namespace win
