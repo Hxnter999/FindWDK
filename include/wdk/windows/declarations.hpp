@@ -28,7 +28,7 @@ namespace win {
 
     void KeRevertToUserAffinityThreadEx(std::uint64_t affinity);
 
-    arch::address ExAllocatePoolWithTag(std::uint32_t type, std::size_t size, std::uint32_t tag);
+    arch::address ExAllocatePoolWithTag(pool_type type, std::size_t size, std::uint32_t tag);
 
     void ExFreePool(arch::address pool_address);
 
