@@ -2,10 +2,8 @@
 #define WDK_ARCH_MSRS_HPP
 
 namespace arch {
-    template<typename T>
-    ALWAYS_INLINE T load_msr() {
-        return intrin::rdmsr(T::number);
-    }
+    template <typename T>
+    concept is_msr = requires { T::number; };
 
     struct efer : win::scalar_convertible<efer, std::uint64_t> {
         using win::scalar_convertible<efer, std::uint64_t>::scalar_convertible;

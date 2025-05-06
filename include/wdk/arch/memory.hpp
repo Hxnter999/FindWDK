@@ -48,6 +48,17 @@ namespace arch {
             return *this = *this + size;
         }
 
+        constexpr address &operator++() {
+            *this += 1;
+            return *this;
+        }
+
+        constexpr address operator++(int) {
+            const address temp = *this;
+            ++(*this);
+            return temp;
+        }
+
         constexpr address operator-(const std::size_t size) const {
             return static_cast<std::uint64_t>(*this) - size;
         }
@@ -56,13 +67,25 @@ namespace arch {
             return *this = *this - size;
         }
 
+        constexpr address &operator--() {
+            *this -= 1;
+            return *this;
+        }
+
+        constexpr address operator--(int) {
+            const address temp = *this;
+            --(*this);
+            return temp;
+        }
+
         constexpr bool operator==(const address &other) const = default;
 
         constexpr bool operator!=(const address &other) const = default;
 
         constexpr auto operator<=>(const address &other) const = default;
-    };
-} // namespace arch
+    } __attribute__((packed));
+    static_assert(sizeof(address) == sizeof(std::uint64_t), "arch::address size is incorrect");
 
+} // namespace arch
 
 #endif // WDK_ARCH_PAGING_HPP

@@ -15,8 +15,10 @@ ntstatus DriverEntry(PDRIVER_OBJECT driver_object, PUNICODE_STRING) {
     intrin::write_cr3(intrin::read_cr3());
 
     // msr <-> 64 bit integer
-    arch::efer efer = intrin::rdmsr(arch::efer::number);
-    efer = arch::load_msr<arch::efer>();
+    auto efer = intrin::rdmsr<arch::efer>();
+    efer = intrin::rdmsr(arch::efer::number);
+    intrin::wrmsr(efer);
+    intrin::wrmsr(arch::efer::number, static_cast<std::uint64_t>(efer));
 
     // address <-> 64 bit integer
     // address <-> T* explicitly
@@ -24,6 +26,12 @@ ntstatus DriverEntry(PDRIVER_OBJECT driver_object, PUNICODE_STRING) {
     arch::address entrypoint{nullptr};
     entrypoint = &DriverEntry;
     win::print_ex(0, 0, "Running from: %p\n", entrypoint);
+
+    auto idtr = intrin::sidt();
+    for (arch::address interrupt_descriptor : idtr) {
+        win::print_ex(0, 0, "%p\n", interrupt_descriptor);
+    }
+
 
     return ntstatus::success;
 }

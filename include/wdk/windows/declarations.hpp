@@ -3,7 +3,6 @@
 #define WDK_WINDOWS_DECLARATIONS_HPP
 #include "types.hpp"
 
-
 namespace win {
     // variables
     extern "C" {

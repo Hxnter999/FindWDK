@@ -35,7 +35,7 @@ namespace win {
             *static_cast<Derived *>(this) = std::bit_cast<Derived>(v);
             return *static_cast<Derived *>(this);
         }
-    };
+    } __attribute__((packed));
 } // namespace win
 
 #endif // WDK_UTILS_HPP
