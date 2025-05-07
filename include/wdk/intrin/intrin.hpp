@@ -61,7 +61,6 @@ namespace intrin {
             "rdmsr"
             : "=a"(low), "=d"(high)
             : "c"(msr)
-            :
         );
         return (static_cast<std::uint64_t>(high) << 32) | low;
     }
@@ -183,7 +182,6 @@ namespace intrin {
             "mov %0, %%cr0"
             :
             : "r"(value)
-            : "memory"
         );
     }
 
@@ -192,7 +190,6 @@ namespace intrin {
             "mov %0, %%cr2"
             :
             : "r"(value)
-            : "memory"
         );
     }
 
@@ -201,7 +198,6 @@ namespace intrin {
             "mov %0, %%cr3"
             :
             : "r"(value)
-            : "memory"
         );
     }
 
@@ -210,7 +206,6 @@ namespace intrin {
             "mov %0, %%cr4"
             :
             : "r"(value)
-            : "memory"
         );
     }
 
@@ -219,7 +214,6 @@ namespace intrin {
             "mov %0, %%cr8"
             :
             : "r"(value)
-            : "memory"
         );
     }
 
