@@ -183,7 +183,8 @@ namespace intrin {
             "mov %0, %%cr0"
             :
             : "r"(value)
-            : "memory");
+            : "memory"
+        );
     }
 
     ALWAYS_INLINE void write_cr2(std::uint64_t value) {
@@ -191,6 +192,7 @@ namespace intrin {
             "mov %0, %%cr2"
             :
             : "r"(value)
+            : "memory"
         );
     }
 
@@ -199,7 +201,8 @@ namespace intrin {
             "mov %0, %%cr3"
             :
             : "r"(value)
-            : "memory");
+            : "memory"
+        );
     }
 
     ALWAYS_INLINE void write_cr4(std::uint64_t value) {
@@ -207,7 +210,8 @@ namespace intrin {
             "mov %0, %%cr4"
             :
             : "r"(value)
-            : "memory");
+            : "memory"
+        );
     }
 
     ALWAYS_INLINE void write_cr8(std::uint64_t value) {
@@ -215,14 +219,16 @@ namespace intrin {
             "mov %0, %%cr8"
             :
             : "r"(value)
-            : "memory");
+            : "memory"
+        );
     }
 
     ALWAYS_INLINE void lidt(const arch::interrupt_descriptor_table &idt) {
         asm volatile(
             "lidt %0"
             :
-            : "m"(idt));
+            : "m"(idt)
+        );
     }
 
     ALWAYS_INLINE arch::interrupt_descriptor_table sidt() {
@@ -231,7 +237,8 @@ namespace intrin {
             "sidt %0"
             : "=m"(idt)
             :
-            : "memory");
+            : "memory"
+        );
         return idt;
     }
 
