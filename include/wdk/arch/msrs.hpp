@@ -2,7 +2,7 @@
 #define WDK_ARCH_MSRS_HPP
 
 namespace arch {
-    template <typename T>
+    template<typename T>
     concept is_msr = requires { T::number; };
 
     struct efer : win::scalar_convertible<efer, std::uint64_t> {

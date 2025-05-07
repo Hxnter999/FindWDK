@@ -38,6 +38,8 @@ namespace win {
     bool MmIsAddressValid(arch::address virtual_address);
 
     ntstatus RtlGetVersion(OSVERSIONINFO &version_output);
+
+    arch::address RtlFindExportedRoutineByName(arch::address image_base_address, const char *export_name);
     } // extern "C"
 } // namespace win
 #endif // WDK_WINDOWS_DECLARATIONS_HPP

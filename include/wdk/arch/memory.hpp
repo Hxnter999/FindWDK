@@ -84,8 +84,8 @@ namespace arch {
 
         constexpr auto operator<=>(const address &other) const = default;
     } __attribute__((packed));
-    static_assert(sizeof(address) == sizeof(std::uint64_t), "arch::address size is incorrect");
 
+    static_assert(sizeof(address) == sizeof(std::uint64_t), "arch::address size is incorrect");
 } // namespace arch
 
 #endif // WDK_ARCH_PAGING_HPP
