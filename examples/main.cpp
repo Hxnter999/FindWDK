@@ -11,7 +11,7 @@ ntstatus DriverEntry(PDRIVER_OBJECT driver_object, PUNICODE_STRING) {
 
     intrin::wrmsr(0xC000'1011, intrin::rdmsr(0xC000'1011));
     //intrin::amd::clgi();
-    //intrin::intel::...
+    //intrin::intel::vmread(field);
     intrin::write_cr3(intrin::read_cr3());
 
     // msr <-> 64 bit integer
