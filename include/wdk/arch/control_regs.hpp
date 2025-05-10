@@ -2,6 +2,26 @@
 #define WDK_ARCH_CONTROL_REGS_HPP
 
 namespace arch {
+    struct cr0 : win::scalar_convertible<cr0, std::uint64_t> {
+        using win::scalar_convertible<cr0, std::uint64_t>::scalar_convertible;
+
+        std::uint64_t protection_enabled: 1;
+        std::uint64_t monitor_coprocessor: 1;
+        std::uint64_t emulation: 1;
+        std::uint64_t task_switched: 1;
+        std::uint64_t extension_type: 1;
+        std::uint64_t numeric_error: 1;
+        std::uint64_t reserved1: 10;
+        std::uint64_t write_protect: 1;
+        std::uint64_t reserved2: 1;
+        std::uint64_t alignment_mask: 1;
+        std::uint64_t reserved3: 10;
+        std::uint64_t not_write_through: 1;
+        std::uint64_t cache_disable: 1;
+        std::uint64_t paging: 1;
+        std::uint64_t reserved4: 32;
+    } __attribute__((packed));
+
     struct cr2 : win::scalar_convertible<cr2, std::uint64_t> {
         using win::scalar_convertible<cr2, std::uint64_t>::scalar_convertible;
 

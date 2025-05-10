@@ -132,7 +132,7 @@ namespace intrin {
         return (static_cast<std::uint64_t>(high) << 32) | low;
     }
 
-    ALWAYS_INLINE std::uint64_t read_cr0() {
+    ALWAYS_INLINE arch::cr0 read_cr0() {
         std::uint64_t value;
         asm volatile(
             "mov %%cr0, %[val]"
@@ -141,7 +141,7 @@ namespace intrin {
         return value;
     }
 
-    ALWAYS_INLINE std::uint64_t read_cr2() {
+    ALWAYS_INLINE arch::cr2 read_cr2() {
         std::uint64_t value;
         asm volatile(
             "mov %%cr2, %[val]"
@@ -150,7 +150,7 @@ namespace intrin {
         return value;
     }
 
-    ALWAYS_INLINE std::uint64_t read_cr3() {
+    ALWAYS_INLINE arch::cr3 read_cr3() {
         std::uint64_t value;
         asm volatile(
             "mov %%cr3, %[val]"
@@ -159,7 +159,7 @@ namespace intrin {
         return value;
     }
 
-    ALWAYS_INLINE std::uint64_t read_cr4() {
+    ALWAYS_INLINE arch::cr4 read_cr4() {
         std::uint64_t value;
         asm volatile(
             "mov %%cr4, %[val]"
@@ -168,7 +168,7 @@ namespace intrin {
         return value;
     }
 
-    ALWAYS_INLINE std::uint64_t read_cr8() {
+    ALWAYS_INLINE arch::cr8 read_cr8() {
         std::uint64_t value;
         asm volatile(
             "mov %%cr8, %[val]"
