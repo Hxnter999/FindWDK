@@ -6,6 +6,7 @@
 #include "msrs.hpp"
 #include "segments.hpp"
 #include "descriptors.hpp"
+#include "control_regs.hpp"
 
 
 #endif //WDK_ARCH_HPP

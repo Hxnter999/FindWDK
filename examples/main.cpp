@@ -1,5 +1,56 @@
 #include <wdk/wdk.hpp>
 
+/*
+ * Assume @param pml4 is the base address of the pml4 table taken from cr3
+ * Assume direct access to the physical address is possible
+*/
+arch::address translation_example(const arch::address pml4, const arch::address linear_address) {
+    const auto pml4e = static_cast<arch::pml4e *>(pml4)[linear_address.p4_index];
+    if (pml4e.present == false) {
+        return nullptr;
+    }
+
+    const auto pdpte_large = static_cast<arch::pdpte_1gb *>(static_cast<arch::address>(pml4e.page_frame_number) << 12)[
+        linear_address.p3_index];
+    if (pml4e.present == false) {
+        return nullptr;
+    }
+
+    // 1gb mapping
+    if (pdpte_large.page_size == true) {
+        const std::uint64_t offset_large = (static_cast<std::uint64_t>(linear_address.p2_index) << 21) + (
+                                               static_cast<std::uint64_t>(linear_address.p1_index) << 12) +
+                                           linear_address.
+                                           offset;
+
+        return static_cast<arch::address>(pdpte_large.page_frame_number) << 30 + offset_large;
+    }
+
+    const arch::pdpte pdpte{pdpte_large};
+    const auto pde_large = static_cast<arch::pde_2mb *>(static_cast<arch::address>(pdpte.page_frame_number) << 12)[
+        linear_address.p2_index];
+    if (pde_large.present == false) {
+        return nullptr;
+    }
+
+    // 2mb mapping
+    if (pde_large.page_size == true) {
+        const std::uint64_t offset_large = (static_cast<std::uint64_t>(linear_address.p1_index) << 12) + linear_address.
+                                           offset;
+        return static_cast<arch::address>(pde_large.page_frame_number) << 21 + offset_large;
+    }
+
+    const arch::pde pde{pde_large};
+    const auto pte = static_cast<arch::pte *>(static_cast<arch::address>(pde.page_frame_number) << 12)[linear_address.
+        p1_index];
+    if (pte.present == false) {
+        return nullptr;
+    }
+
+    // 4kb mapping
+    return (static_cast<arch::address>(pte.page_frame_number) << 12) + linear_address.offset;
+}
+
 extern "C"
 ntstatus DriverEntry(PDRIVER_OBJECT driver_object, PUNICODE_STRING) {
     win::print_ex(0, 0, "Processor count: %u\n", win::KeQueryActiveProcessorCount());

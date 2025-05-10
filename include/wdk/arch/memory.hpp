@@ -83,9 +83,100 @@ namespace arch {
         constexpr bool operator!=(const address &other) const = default;
 
         constexpr auto operator<=>(const address &other) const = default;
+
+        constexpr address operator<<(const std::size_t shift) const {
+            return static_cast<std::uint64_t>(*this) << shift;
+        }
+
+        constexpr address &operator<<=(const std::size_t shift) {
+            return *this = *this << shift;
+        }
+
+        constexpr address operator>>(const std::size_t shift) const {
+            return static_cast<std::uint64_t>(*this) >> shift;
+        }
+
+        constexpr address &operator>>=(const std::size_t shift) {
+            return *this = *this >> shift;
+        }
     } __attribute__((packed));
 
     static_assert(sizeof(address) == sizeof(std::uint64_t), "arch::address size is incorrect");
+
+    struct page_entry_4kb : win::scalar_convertible<page_entry_4kb, std::uint64_t> {
+        using win::scalar_convertible<page_entry_4kb, std::uint64_t>::scalar_convertible;
+
+        std::uint64_t present: 1;
+        std::uint64_t write: 1;
+        std::uint64_t user: 1;
+        std::uint64_t write_through: 1;
+        std::uint64_t cache_disable: 1;
+        std::uint64_t accessed: 1;
+        std::uint64_t dirty: 1;
+        std::uint64_t page_attribute_table: 1;
+        std::uint64_t global: 1;
+        std::uint64_t ignored1: 3;
+        std::uint64_t page_frame_number: 40;
+        std::uint64_t ignored2: 7;
+        std::uint64_t memory_protection_key: 4;
+        std::uint64_t execute_disable: 1;
+    } __attribute__((packed));
+
+    static_assert(sizeof(page_entry_4kb) == sizeof(std::uint64_t), "arch::page_entry_4kb size is incorrect");
+
+    struct page_entry_2mb : win::scalar_convertible<page_entry_2mb, std::uint64_t> {
+        using win::scalar_convertible<page_entry_2mb, std::uint64_t>::scalar_convertible;
+
+        std::uint64_t present: 1;
+        std::uint64_t write: 1;
+        std::uint64_t user: 1;
+        std::uint64_t write_through: 1;
+        std::uint64_t cache_disable: 1;
+        std::uint64_t accessed: 1;
+        std::uint64_t dirty: 1;
+        std::uint64_t page_size: 1; // enabled for non 4kb entries
+        std::uint64_t global: 1;
+        std::uint64_t ignored1: 3;
+        std::uint64_t page_attribute_table: 1;
+        std::uint64_t must_be_zero: 8;
+        std::uint64_t page_frame_number: 31;
+        std::uint64_t ignored2: 7;
+        std::uint64_t memory_protection_key: 4;
+        std::uint64_t execute_disable: 1;
+    } __attribute__((packed));
+
+    static_assert(sizeof(page_entry_2mb) == sizeof(std::uint64_t), "arch::page_entry_2mb size is incorrect");
+
+    struct page_entry_1gb : win::scalar_convertible<page_entry_1gb, std::uint64_t> {
+        using win::scalar_convertible<page_entry_1gb, std::uint64_t>::scalar_convertible;
+
+        std::uint64_t present: 1;
+        std::uint64_t write: 1;
+        std::uint64_t user: 1;
+        std::uint64_t write_through: 1;
+        std::uint64_t cache_disable: 1;
+        std::uint64_t accessed: 1;
+        std::uint64_t dirty: 1;
+        std::uint64_t page_size: 1; // enabled for non 4kb entries
+        std::uint64_t global: 1;
+        std::uint64_t ignored1: 3;
+        std::uint64_t page_attribute_table: 1;
+        std::uint64_t must_be_zero: 17;
+        std::uint64_t page_frame_number: 22;
+        std::uint64_t ignored2: 7;
+        std::uint64_t memory_protection_key: 4;
+        std::uint64_t execute_disable: 1;
+    } __attribute__((packed));
+
+    static_assert(sizeof(page_entry_1gb) == sizeof(std::uint64_t), "arch::page_entry_1gb size is incorrect");
+
+    using pml4e = page_entry_4kb;
+    using pdpte = page_entry_4kb;
+    using pde = page_entry_4kb;
+    using pte = page_entry_4kb;
+
+    using pdpte_1gb = page_entry_1gb;
+    using pde_2mb = page_entry_2mb;
 } // namespace arch
 
 #endif // WDK_ARCH_PAGING_HPP
