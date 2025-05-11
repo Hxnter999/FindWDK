@@ -8,38 +8,38 @@
 namespace intrin {
     ALWAYS_INLINE void halt() {
         asm volatile(
-            "hlt"
+            "hlt;"
         );
     }
 
     ALWAYS_INLINE void cli() {
         asm volatile(
-            "cli"
+            "cli;"
         );
     }
 
     ALWAYS_INLINE void sti() {
         asm volatile(
-            "sti"
+            "sti;"
         );
     }
 
     ALWAYS_INLINE void nop() {
         asm volatile(
-            "nop"
+            "nop;"
         );
     }
 
     ALWAYS_INLINE void pause() {
         asm volatile(
-            "pause"
+            "pause;"
         );
     }
 
     template<int N>
     ALWAYS_INLINE void int_() {
         asm volatile(
-            "int %[vec]"
+            "int %[vec];"
             :
             : [vec] "i"(N)
         );
@@ -51,14 +51,14 @@ namespace intrin {
 
     ALWAYS_INLINE void iret() {
         asm volatile(
-            "iret"
+            "iret;"
         );
     }
 
     ALWAYS_INLINE std::uint64_t rdmsr(const std::uint32_t msr) {
         std::uint32_t low, high;
         asm volatile(
-            "rdmsr"
+            "rdmsr;"
             : "=a"(low), "=d"(high)
             : "c"(msr)
         );
@@ -75,7 +75,7 @@ namespace intrin {
         std::uint32_t high = static_cast<std::uint32_t>(value >> 32);
 
         asm volatile (
-            "wrmsr"
+            "wrmsr;"
             :
             : "c"(msr), "a"(low), "d"(high)
             : "memory"
@@ -89,7 +89,7 @@ namespace intrin {
 
     ALWAYS_INLINE void invlpg(const arch::address address) {
         asm volatile(
-            "invlpg (%[addr])"
+            "invlpg (%[addr]);"
             :
             : [addr] "r"(address)
             : "memory"
@@ -98,7 +98,7 @@ namespace intrin {
 
     ALWAYS_INLINE void lfence() {
         asm volatile(
-            "lfence"
+            "lfence;"
             :
             :
             : "memory"
@@ -107,7 +107,7 @@ namespace intrin {
 
     ALWAYS_INLINE void sfence() {
         asm volatile(
-            "sfence"
+            "sfence;"
             :
             :
             : "memory"
@@ -116,7 +116,7 @@ namespace intrin {
 
     ALWAYS_INLINE void mfence() {
         asm volatile(
-            "mfence"
+            "mfence;"
             :
             :
             : "memory"
@@ -126,16 +126,118 @@ namespace intrin {
     ALWAYS_INLINE std::uint64_t rdtsc() {
         std::uint32_t low, high;
         asm volatile(
-            "rdtsc"
+            "rdtsc;"
             : "=a"(low), "=d"(high)
         );
         return (static_cast<std::uint64_t>(high) << 32) | low;
     }
 
+    ALWAYS_INLINE arch::address read_dr0() {
+        std::uint64_t value;
+        asm volatile(
+            "mov %%dr0, %[val];"
+            : [val] "=r"(value)
+        );
+        return value;
+    }
+
+    ALWAYS_INLINE arch::address read_dr1() {
+        std::uint64_t value;
+        asm volatile(
+            "mov %%dr1, %[val];"
+            : [val] "=r"(value)
+        );
+        return value;
+    }
+
+    ALWAYS_INLINE arch::address read_dr2() {
+        std::uint64_t value;
+        asm volatile(
+            "mov %%dr2, %[val];"
+            : [val] "=r"(value)
+        );
+        return value;
+    }
+
+    ALWAYS_INLINE arch::address read_dr3() {
+        std::uint64_t value;
+        asm volatile(
+            "mov %%dr3, %[val];"
+            : [val] "=r"(value)
+        );
+        return value;
+    }
+
+    ALWAYS_INLINE arch::dr6 read_dr6() {
+        std::uint64_t value;
+        asm volatile(
+            "mov %%dr6, %[val];"
+            : [val] "=r"(value)
+        );
+        return value;
+    }
+
+    ALWAYS_INLINE arch::dr7 read_dr7() {
+        std::uint64_t value;
+        asm volatile(
+            "mov %%dr7, %[val];"
+            : [val] "=r"(value)
+        );
+        return value;
+    }
+
+    ALWAYS_INLINE void write_dr0(arch::address value) {
+        asm volatile(
+            "mov %[val], %%dr0;"
+            :
+            : [val] "r"(value)
+        );
+    }
+
+    ALWAYS_INLINE void write_dr1(arch::address value) {
+        asm volatile(
+            "mov %[val], %%dr1;"
+            :
+            : [val] "r"(value)
+        );
+    }
+
+    ALWAYS_INLINE void write_dr2(arch::address value) {
+        asm volatile(
+            "mov %[val], %%dr2;"
+            :
+            : [val] "r"(value)
+        );
+    }
+
+    ALWAYS_INLINE void write_dr3(arch::address value) {
+        asm volatile(
+            "mov %[val], %%dr3;"
+            :
+            : [val] "r"(value)
+        );
+    }
+
+    ALWAYS_INLINE void write_dr6(std::uint64_t value) {
+        asm volatile(
+            "mov %[val], %%dr6;"
+            :
+            : [val] "r"(value)
+        );
+    }
+
+    ALWAYS_INLINE void write_dr7(std::uint64_t value) {
+        asm volatile(
+            "mov %[val], %%dr7;"
+            :
+            : [val] "r"(value)
+        );
+    }
+
     ALWAYS_INLINE arch::cr0 read_cr0() {
         std::uint64_t value;
         asm volatile(
-            "mov %%cr0, %[val]"
+            "mov %%cr0, %[val];"
             : [val] "=r"(value)
         );
         return value;
@@ -144,7 +246,7 @@ namespace intrin {
     ALWAYS_INLINE arch::cr2 read_cr2() {
         std::uint64_t value;
         asm volatile(
-            "mov %%cr2, %[val]"
+            "mov %%cr2, %[val];"
             : [val] "=r"(value)
         );
         return value;
@@ -153,7 +255,7 @@ namespace intrin {
     ALWAYS_INLINE arch::cr3 read_cr3() {
         std::uint64_t value;
         asm volatile(
-            "mov %%cr3, %[val]"
+            "mov %%cr3, %[val];"
             : [val] "=r"(value)
         );
         return value;
@@ -162,7 +264,7 @@ namespace intrin {
     ALWAYS_INLINE arch::cr4 read_cr4() {
         std::uint64_t value;
         asm volatile(
-            "mov %%cr4, %[val]"
+            "mov %%cr4, %[val];"
             : [val] "=r"(value)
         );
         return value;
@@ -171,7 +273,7 @@ namespace intrin {
     ALWAYS_INLINE arch::cr8 read_cr8() {
         std::uint64_t value;
         asm volatile(
-            "mov %%cr8, %[val]"
+            "mov %%cr8, %[val];"
             : [val] "=r"(value)
         );
         return value;
@@ -179,7 +281,7 @@ namespace intrin {
 
     ALWAYS_INLINE void write_cr0(std::uint64_t value) {
         asm volatile(
-            "mov %[val], %%cr0"
+            "mov %[val], %%cr0;"
             :
             : [val] "r"(value)
         );
@@ -187,7 +289,7 @@ namespace intrin {
 
     ALWAYS_INLINE void write_cr2(std::uint64_t value) {
         asm volatile(
-            "mov %[val], %%cr2"
+            "mov %[val], %%cr2;"
             :
             : [val] "r"(value)
         );
@@ -195,7 +297,7 @@ namespace intrin {
 
     ALWAYS_INLINE void write_cr3(std::uint64_t value) {
         asm volatile(
-            "mov %[val], %%cr3"
+            "mov %[val], %%cr3;"
             :
             : [val] "r"(value)
         );
@@ -203,7 +305,7 @@ namespace intrin {
 
     ALWAYS_INLINE void write_cr4(std::uint64_t value) {
         asm volatile(
-            "mov %[val], %%cr4"
+            "mov %[val], %%cr4;"
             :
             : [val] "r"(value)
         );
@@ -211,7 +313,7 @@ namespace intrin {
 
     ALWAYS_INLINE void write_cr8(std::uint64_t value) {
         asm volatile(
-            "mov %[val], %%cr8"
+            "mov %[val], %%cr8;"
             :
             : [val] "r"(value)
         );
@@ -219,7 +321,7 @@ namespace intrin {
 
     ALWAYS_INLINE void lidt(const arch::interrupt_descriptor_table &idt) {
         asm volatile(
-            "lidt %[idt]"
+            "lidt %[idt];"
             :
             : [idt] "m"(idt)
         );
@@ -228,7 +330,7 @@ namespace intrin {
     ALWAYS_INLINE arch::interrupt_descriptor_table sidt() {
         arch::interrupt_descriptor_table idt{};
         asm volatile(
-            "sidt %[idt]"
+            "sidt %[idt];"
             : [idt] "=m"(idt)
             :
             : "memory"
@@ -238,7 +340,7 @@ namespace intrin {
 
     ALWAYS_INLINE void lgdt(const arch::global_descriptor_table &gdt) {
         asm volatile(
-            "lgdt %[gdt]"
+            "lgdt %[gdt];"
             :
             : [gdt] "m"(gdt)
         );
@@ -247,10 +349,29 @@ namespace intrin {
     ALWAYS_INLINE arch::global_descriptor_table lgdt() {
         arch::global_descriptor_table gdt{};
         asm volatile(
-            "lgdt %[gdt]"
+            "lgdt %[gdt];"
             : [gdt] "=m"(gdt)
             :
             : "memory"
+        );
+    }
+
+    ALWAYS_INLINE std::uint32_t stmxcsr() {
+        std::uint32_t value;
+        asm volatile(
+            "stmxcsr %[val];"
+            : [val] "=m" (value)
+            :
+            : "memory"
+        );
+        return value;
+    }
+
+    ALWAYS_INLINE void ldmxcsr(const std::uint32_t value) {
+        asm volatile(
+            "ldmxcsr %[val];"
+            :
+            : [val] "m" (value)
         );
     }
 } // namespace intrin

@@ -8,8 +8,8 @@ namespace intrin::intel {
         bool success{};
 
         asm volatile(
-            "vmread %[field], %[value]\n\t"
-            "setnz %[success]"
+            "vmread %[field], %[value];"
+            "setnz %[success];"
             : [value] "=r"(value), [success] "=r"(success)
             : [field] "r"(field)
             : "cc", "memory"
@@ -25,8 +25,8 @@ namespace intrin::intel {
         bool success{};
 
         asm volatile(
-            "vmwrite %[value], %[field]\n\t"
-            "setnz %[success]"
+            "vmwrite %[value], %[field];"
+            "setnz %[success];"
             : [success] "=r"(success)
             : [field] "r"(field), [value] "r"(value)
             : "cc", "memory"

@@ -4,13 +4,13 @@
 namespace intrin::amd {
     ALWAYS_INLINE void stgi() {
         asm volatile(
-            "stgi"
+            "stgi;"
         );
     }
 
     ALWAYS_INLINE void clgi() {
         asm volatile(
-            "clgi"
+            "clgi;"
         );
     }
 } // namespace intrin::amd

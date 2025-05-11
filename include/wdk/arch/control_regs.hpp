@@ -81,6 +81,62 @@ namespace arch {
     } __attribute__((packed));
 
     static_assert(sizeof(cr8) == sizeof(std::uint64_t), "arch::cr8 size is incorrect");
+
+    enum class bp_type :std::uint64_t {
+        execution,
+        write,
+        io,
+        read_write
+    };
+
+    struct dr6 : win::scalar_convertible<dr6, std::uint64_t> {
+        using win::scalar_convertible<dr6, std::uint64_t>::scalar_convertible;
+
+        std::uint64_t bp0_condition_detected: 1;
+        std::uint64_t bp1_condition_detected: 1;
+        std::uint64_t bp2_condition_detected: 1;
+        std::uint64_t bp3_condition_detected: 1;
+        std::uint64_t reserved1: 7;
+        std::uint64_t bus_lock_detected: 1;
+        std::uint64_t reserved2: 1;
+        std::uint64_t bp_debug_access_detected: 1;
+        std::uint64_t bp_single_step: 1;
+        std::uint64_t bp_task_switch: 1;
+        std::uint64_t reserved3: 16;
+        std::uint64_t reserved4: 32;
+    } __attribute__((packed));
+
+    static_assert(sizeof(dr6) == sizeof(std::uint64_t), "arch::dr6 size is incorrect");
+
+    struct dr7 : win::scalar_convertible<dr7, std::uint64_t> {
+        using win::scalar_convertible<dr7, std::uint64_t>::scalar_convertible;
+
+        std::uint64_t local_bp0: 1;
+        std::uint64_t global_bp0: 1;
+        std::uint64_t local_bp1: 1;
+        std::uint64_t global_bp1: 1;
+        std::uint64_t local_bp2: 1;
+        std::uint64_t global_bp2: 1;
+        std::uint64_t local_bp3: 1;
+        std::uint64_t global_bp4: 1;
+        std::uint64_t local_bp: 1;
+        std::uint64_t global_bp: 1;
+        std::uint64_t reserved1: 1;
+        std::uint64_t reserved2: 2;
+        std::uint64_t general_detect: 1;
+        std::uint64_t reserved3: 2;
+        bp_type bp0_type: 2;
+        std::uint64_t bp0_length: 2;
+        bp_type bp1_type: 2;
+        std::uint64_t bp1_length: 2;
+        bp_type bp2_type: 2;
+        std::uint64_t bp2_length: 2;
+        bp_type bp3_type: 2;
+        std::uint64_t bp3_length: 2;
+        std::uint64_t reserved4: 32;
+    } __attribute__((packed));
+
+    static_assert(sizeof(dr7) == sizeof(std::uint64_t), "arch::dr7 size is incorrect");
 } // namespace arch
 
 #endif // WDK_ARCH_CONTROL_REGS_HPP
