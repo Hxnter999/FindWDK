@@ -87,7 +87,7 @@ namespace intrin {
         return wrmsr(T::number, static_cast<std::uint64_t>(value));
     }
 
-    ALWAYS_INLINE void invlpg(const void *address) {
+    ALWAYS_INLINE void invlpg(const arch::address address) {
         asm volatile(
             "invlpg (%[addr])"
             :
