@@ -79,8 +79,8 @@ ntstatus DriverEntry(PDRIVER_OBJECT driver_object, PUNICODE_STRING) {
     win::print_ex(0, 0, "Running from: %p\n", entrypoint);
 
     auto idtr = intrin::sidt();
-    for (auto idte: idtr) {
-        win::print_ex(0, 0, "%p\n", idte->get_handler());
+    for (auto &idte: idtr) {
+        win::print_ex(0, 0, "%p\n", idte.get_handler());
     }
 
 

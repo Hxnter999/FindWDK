@@ -24,8 +24,8 @@ namespace arch {
                 : current(base + idx), index(idx) {
             }
 
-            T *operator*() const {
-                return current;
+            T &operator*() const {
+                return *current;
             }
 
             iterator &operator++() {
@@ -85,7 +85,7 @@ namespace arch {
         }
 
         void set_handler(const address handler) {
-            const std::uint64_t addr = static_cast<std::uint64_t>(handler);
+            const auto addr = static_cast<std::uint64_t>(handler);
             offset_low = addr & 0xFFFF;
             offset_mid = (addr >> 16) & 0xFFFF;
             offset_high = (addr >> 32) & 0xFFFFFFFF;
