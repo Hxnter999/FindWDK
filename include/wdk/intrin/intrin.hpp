@@ -374,5 +374,59 @@ namespace intrin {
             : [val] "m" (value)
         );
     }
+
+    ALWAYS_INLINE void outb(std::uint16_t port, std::uint8_t value) {
+        asm volatile(
+            "outb %[val], %[port];"
+            :
+            : [val] "a"(value), [port] "Nd"(port)
+        );
+    }
+
+    ALWAYS_INLINE void outw(std::uint16_t port, std::uint16_t value) {
+        asm volatile(
+            "outw %[val], %[port];"
+            :
+            : [val] "a"(value), [port] "Nd"(port)
+        );
+    }
+
+    ALWAYS_INLINE void outl(std::uint16_t port, std::uint32_t value) {
+        asm volatile(
+            "outl %[val], %[port];"
+            :
+            : [val] "a"(value), [port] "Nd"(port)
+        );
+    }
+
+    ALWAYS_INLINE std::uint8_t inb(std::uint16_t port) {
+        std::uint8_t value;
+        asm volatile(
+            "inb %[port], %[val];"
+            : [val] "=a"(value)
+            : [port] "Nd"(port)
+        );
+        return value;
+    }
+
+    ALWAYS_INLINE std::uint16_t inw(std::uint16_t port) {
+        std::uint16_t value;
+        asm volatile(
+            "inw %[port], %[val];"
+            : [val] "=a"(value)
+            : [port] "Nd"(port)
+        );
+        return value;
+    }
+
+    ALWAYS_INLINE std::uint32_t inl(std::uint16_t port) {
+        std::uint32_t value;
+        asm volatile(
+            "inl %[port], %[val];"
+            : [val] "=a"(value)
+            : [port] "Nd"(port)
+        );
+        return value;
+    }
 } // namespace intrin
 #endif // WDK_INTRINSICS_HPP
