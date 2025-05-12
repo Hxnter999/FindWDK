@@ -38,7 +38,9 @@ if (DEFINED ENV{WDKContentRoot})
 else ()
     file(GLOB WDK_NTDDK_FILES
             "C:/Program Files*/Windows Kits/*/Include/*/km/ntddk.h" # WDK 10
+            "D:/Program Files*/Windows Kits/*/Include/*/km/ntddk.h" # WDK 10 on D:
             "C:/Program Files*/Windows Kits/*/Include/km/ntddk.h" # WDK 8.0, 8.1
+            "D:/Program Files*/Windows Kits/*/Include/km/ntddk.h" # WDK 8.0, 8.1 on D:
     )
 endif ()
 
