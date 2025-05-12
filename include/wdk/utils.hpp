@@ -8,8 +8,8 @@
 
 #define ALWAYS_INLINE __attribute__((always_inline)) inline
 
-#define BEGIN_INTEL_SYNTAX ".intel_syntax noprefix\n\t"
-#define END_INTEL_SYNTAX ".att_syntax\n\t"
+#define BEGIN_INTEL_SYNTAX ".intel_syntax noprefix;"
+#define END_INTEL_SYNTAX ".att_syntax;"
 
 // custom helper types
 namespace win {
