@@ -1,5 +1,7 @@
 #ifndef WDK_UTILS_HPP
 #define WDK_UTILS_HPP
+
+#include <bit>
 #include <cstdint>
 #include <utility>
 #include <type_traits>

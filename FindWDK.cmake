@@ -38,7 +38,9 @@ if (DEFINED ENV{WDKContentRoot})
 else ()
     file(GLOB WDK_NTDDK_FILES
             "C:/Program Files*/Windows Kits/*/Include/*/km/ntddk.h" # WDK 10
+            "D:/Program Files*/Windows Kits/*/Include/*/km/ntddk.h" # WDK 10 on D:
             "C:/Program Files*/Windows Kits/*/Include/km/ntddk.h" # WDK 8.0, 8.1
+            "D:/Program Files*/Windows Kits/*/Include/km/ntddk.h" # WDK 8.0, 8.1 on D:
     )
 endif ()
 
@@ -131,12 +133,26 @@ else ()
     message(FATAL_ERROR "Unsupported architecture")
 endif ()
 
-set(WDK_LINK_FLAGS
+if(CMAKE_LINKER MATCHES ".*lld-link.*" OR CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
+    set(USING_LLD_LINK TRUE)
+else()
+    set(USING_LLD_LINK FALSE)
+endif()
+
+if(USING_LLD_LINK)
+    set(WDK_LINK_FLAGS
+        -nostdlib
+        -nodefaultlibs
+        "-Xlinker" "/ENTRY:DriverEntry"
+    )
+else()
+    set(WDK_LINK_FLAGS
         -nostdlib
         -nodefaultlibs
         -Wl,-e,DriverEntry
         -Wl,--stack=16384
-)
+    )
+endif()
 
 
 # Generate imported targets for WDK lib files
