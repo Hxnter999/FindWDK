@@ -38,8 +38,9 @@ if (DEFINED ENV{WDKContentRoot})
 else ()
     file(GLOB WDK_NTDDK_FILES
             "C:/Program Files*/Windows Kits/*/Include/*/km/ntddk.h" # WDK 10
-            "D:/Program Files*/Windows Kits/*/Include/*/km/ntddk.h" # WDK 10 on D:
             "C:/Program Files*/Windows Kits/*/Include/km/ntddk.h" # WDK 8.0, 8.1
+
+            "D:/Program Files*/Windows Kits/*/Include/*/km/ntddk.h" # WDK 10 on D:
             "D:/Program Files*/Windows Kits/*/Include/km/ntddk.h" # WDK 8.0, 8.1 on D:
     )
 endif ()
@@ -101,6 +102,7 @@ set(WDK_NTDDI_VERSION "" CACHE STRING "Specified NTDDI_VERSION for WDK targets i
 
 set(WDK_COMPILE_FLAGS
         -ffreestanding
+        -fno-threadsafe-statics
         -fmerge-all-constants
         -fno-rtti
         -fno-exceptions
@@ -133,26 +135,26 @@ else ()
     message(FATAL_ERROR "Unsupported architecture")
 endif ()
 
-if(CMAKE_LINKER MATCHES ".*lld-link.*" OR CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
+if (CMAKE_LINKER MATCHES ".*lld-link.*" OR CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
     set(USING_LLD_LINK TRUE)
-else()
+else ()
     set(USING_LLD_LINK FALSE)
-endif()
+endif ()
 
-if(USING_LLD_LINK)
+if (USING_LLD_LINK)
     set(WDK_LINK_FLAGS
-        -nostdlib
-        -nodefaultlibs
-        "-Xlinker" "/ENTRY:DriverEntry"
+            -nostdlib
+            -nodefaultlibs
+            "-Xlinker" "/ENTRY:DriverEntry"
     )
-else()
+else ()
     set(WDK_LINK_FLAGS
-        -nostdlib
-        -nodefaultlibs
-        -Wl,-e,DriverEntry
-        -Wl,--stack=16384
+            -nostdlib
+            -nodefaultlibs
+            -Wl,-e,DriverEntry
+            -Wl,--stack=16384
     )
-endif()
+endif ()
 
 
 # Generate imported targets for WDK lib files
@@ -174,9 +176,9 @@ function(wdk_add_driver _target)
     target_compile_options(${_target} PRIVATE ${WDK_COMPILE_FLAGS})
 
     target_compile_definitions(${_target} PRIVATE
-        ${WDK_COMPILE_DEFINITIONS}
-        $<$<CONFIG:Debug>:${WDK_COMPILE_DEFINITIONS_DEBUG}>
-        _WIN32_WINNT=${WDK_WINVER}
+            ${WDK_COMPILE_DEFINITIONS}
+            $<$<CONFIG:Debug>:${WDK_COMPILE_DEFINITIONS_DEBUG}>
+            _WIN32_WINNT=${WDK_WINVER}
     )
 
     target_link_options(${_target} PRIVATE ${WDK_LINK_FLAGS})
@@ -186,13 +188,13 @@ function(wdk_add_driver _target)
     endif ()
 
     target_include_directories(${_target} SYSTEM PRIVATE
-        "${WDK_ROOT}/Include/${WDK_INC_VERSION}/shared"
-        "${WDK_ROOT}/Include/${WDK_INC_VERSION}/km"
-        "${FINDWDK_DIR}/include"
+            "${WDK_ROOT}/Include/${WDK_INC_VERSION}/shared"
+            "${WDK_ROOT}/Include/${WDK_INC_VERSION}/km"
+            "${FINDWDK_DIR}/include"
     )
 
     target_link_libraries(${_target}
-        WDK::NTOSKRNL
-        #WDK::WMILIB
+            WDK::NTOSKRNL
+            #WDK::WMILIB
     )
 endfunction()
