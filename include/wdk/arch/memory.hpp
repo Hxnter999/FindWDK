@@ -5,8 +5,8 @@ namespace arch {
     template<typename T>
     concept is_address =
             std::is_trivially_copyable_v<T> &&
-            sizeof(T) == sizeof(uint64_t) && (std::is_pointer_v<T> || std::is_integral_v<T> || std::is_convertible_v<T,
-                                                  void *>);
+            (std::is_pointer_v<T> || std::is_integral_v<T> || std::is_convertible_v<T, void *> || sizeof(T) == sizeof(
+                 std::uint64_t));
 
     struct address {
         std::uint64_t offset: 12;
@@ -18,18 +18,25 @@ namespace arch {
 
         constexpr address() = default;
 
-        template<is_address T>
-        constexpr address(T src) {
-            *this = std::bit_cast<address>(src);
+        constexpr address(const is_address auto &src) {
+            if constexpr (sizeof(src) < sizeof(address) && std::is_integral_v<decltype(src)>) {
+                *this = std::bit_cast<address>(static_cast<std::uint64_t>(src));
+            } else {
+                *this = std::bit_cast<address>(src);
+            }
         }
 
-        template<is_address T>
-        constexpr address &operator=(T src) {
-            *this = std::bit_cast<address>(src);
+        constexpr address &operator=(const is_address auto &src) {
+            if constexpr (sizeof(src) < sizeof(address) && std::is_integral_v<decltype(src)>) {
+                *this = std::bit_cast<address>(static_cast<std::uint64_t>(src));
+            } else {
+                *this = std::bit_cast<address>(src);
+            }
             return *this;
         }
 
         constexpr operator void *() const { return std::bit_cast<void *>(*this); }
+        constexpr operator std::uintptr_t() const { return std::bit_cast<std::uintptr_t>(*this); }
 
         template<is_address T>
         explicit constexpr operator T() const { return std::bit_cast<T>(*this); }
@@ -40,12 +47,89 @@ namespace arch {
             return *static_cast<void **>(*this);
         }
 
-        constexpr address operator+(const std::size_t size) const {
-            return static_cast<std::uint64_t>(*this) + size;
+
+        friend constexpr address operator+(const address &lhs, const address &rhs) {
+            return static_cast<std::uint64_t>(lhs) + static_cast<std::uint64_t>(rhs);
         }
 
-        constexpr address &operator+=(const std::size_t size) {
-            return *this = *this + size;
+        friend constexpr address operator+(const address &lhs, const is_address auto &rhs) {
+            return static_cast<std::uint64_t>(lhs) + static_cast<std::uint64_t>(rhs);
+        }
+
+        friend constexpr address operator+(const is_address auto &lhs, const address &rhs) {
+            return static_cast<std::uint64_t>(lhs) + static_cast<std::uint64_t>(rhs);
+        }
+
+
+        friend constexpr address operator-(const address &lhs, const address &rhs) {
+            return static_cast<std::uint64_t>(lhs) - static_cast<std::uint64_t>(rhs);
+        }
+
+        friend constexpr address operator-(const address &lhs, const is_address auto &rhs) {
+            return static_cast<std::uint64_t>(lhs) - static_cast<std::uint64_t>(rhs);
+        }
+
+        friend constexpr address operator-(const is_address auto &lhs, const address &rhs) {
+            return static_cast<std::uint64_t>(lhs) - static_cast<std::uint64_t>(rhs);
+        }
+
+
+        friend constexpr address operator<<(const address &lhs, const address &rhs) {
+            return static_cast<std::uint64_t>(lhs) << static_cast<std::uint64_t>(rhs);
+        }
+
+        friend constexpr address operator<<(const address &lhs, const is_address auto &rhs) {
+            return static_cast<std::uint64_t>(lhs) << static_cast<std::uint64_t>(rhs);
+        }
+
+        friend constexpr address operator<<(const is_address auto &lhs, const address &rhs) {
+            return static_cast<std::uint64_t>(lhs) << static_cast<std::uint64_t>(rhs);
+        }
+
+
+        friend constexpr address operator>>(const address &lhs, const address &rhs) {
+            return static_cast<std::uint64_t>(lhs) >> static_cast<std::uint64_t>(rhs);
+        }
+
+        friend constexpr address operator>>(const address &lhs, const is_address auto &rhs) {
+            return static_cast<std::uint64_t>(lhs) >> static_cast<std::uint64_t>(rhs);
+        }
+
+        friend constexpr address operator>>(const is_address auto &lhs, const address &rhs) {
+            return static_cast<std::uint64_t>(lhs) >> static_cast<std::uint64_t>(rhs);
+        }
+
+
+        constexpr address &operator+=(const address &delta) {
+            return *this = *this + delta;
+        }
+
+        constexpr address &operator+=(const is_address auto &delta) {
+            return *this = *this + delta;
+        }
+
+        constexpr address &operator-=(const address &delta) {
+            return *this = *this - delta;
+        }
+
+        constexpr address &operator-=(const is_address auto &delta) {
+            return *this = *this - delta;
+        }
+
+        constexpr address &operator<<=(const address &shift) {
+            return *this = *this << shift;
+        }
+
+        constexpr address &operator<<=(const is_address auto &shift) {
+            return *this = *this << shift;
+        }
+
+        constexpr address &operator>>=(const address &shift) {
+            return *this = *this >> shift;
+        }
+
+        constexpr address &operator>>=(const is_address auto &shift) {
+            return *this = *this >> shift;
         }
 
         constexpr address &operator++() {
@@ -57,14 +141,6 @@ namespace arch {
             const address temp = *this;
             ++(*this);
             return temp;
-        }
-
-        constexpr address operator-(const std::size_t size) const {
-            return static_cast<std::uint64_t>(*this) - size;
-        }
-
-        constexpr address &operator-=(const std::size_t size) {
-            return *this = *this - size;
         }
 
         constexpr address &operator--() {
@@ -80,24 +156,20 @@ namespace arch {
 
         constexpr bool operator==(const address &other) const = default;
 
+        constexpr bool operator==(const is_address auto &other) const {
+            return *this == static_cast<address>(other);
+        }
+
         constexpr bool operator!=(const address &other) const = default;
+
+        constexpr bool operator!=(const is_address auto &other) const {
+            return *this != static_cast<address>(other);
+        }
 
         constexpr auto operator<=>(const address &other) const = default;
 
-        constexpr address operator<<(const std::size_t shift) const {
-            return static_cast<std::uint64_t>(*this) << shift;
-        }
-
-        constexpr address &operator<<=(const std::size_t shift) {
-            return *this = *this << shift;
-        }
-
-        constexpr address operator>>(const std::size_t shift) const {
-            return static_cast<std::uint64_t>(*this) >> shift;
-        }
-
-        constexpr address &operator>>=(const std::size_t shift) {
-            return *this = *this >> shift;
+        constexpr auto operator<=>(const is_address auto &other) const {
+            return *this <=> static_cast<address>(other);
         }
     } __attribute__((packed));
 
