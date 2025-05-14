@@ -346,10 +346,10 @@ namespace intrin {
         );
     }
 
-    ALWAYS_INLINE arch::global_descriptor_table lgdt() {
+    ALWAYS_INLINE arch::global_descriptor_table sgdt() {
         arch::global_descriptor_table gdt{};
         asm volatile(
-            "lgdt %[gdt];"
+            "sgdt %[gdt];"
             : [gdt] "=m"(gdt)
             :
             : "memory"
