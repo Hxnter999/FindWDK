@@ -18,12 +18,11 @@ arch::address translation_example(const arch::address pml4, const arch::address 
 
     // 1gb mapping
     if (pdpte_large.page_size == true) {
-        const std::uint64_t offset_large = (static_cast<std::uint64_t>(linear_address.p2_index) << 21) + (
-                                               static_cast<std::uint64_t>(linear_address.p1_index) << 12) +
-                                           linear_address.
-                                           offset;
+        const std::uint64_t offset_large = (static_cast<std::uint64_t>(linear_address.p2_index) << 21) +
+                                           (static_cast<std::uint64_t>(linear_address.p1_index) << 12) +
+                                           linear_address.offset;
 
-        return static_cast<arch::address>(pdpte_large.page_frame_number) << 30 + offset_large;
+        return (static_cast<arch::address>(pdpte_large.page_frame_number) << 30) + offset_large;
     }
 
     const arch::pdpte pdpte{pdpte_large};
@@ -35,9 +34,9 @@ arch::address translation_example(const arch::address pml4, const arch::address 
 
     // 2mb mapping
     if (pde_large.page_size == true) {
-        const std::uint64_t offset_large = (static_cast<std::uint64_t>(linear_address.p1_index) << 12) + linear_address.
-                                           offset;
-        return static_cast<arch::address>(pde_large.page_frame_number) << 21 + offset_large;
+        const std::uint64_t offset_large = (static_cast<std::uint64_t>(linear_address.p1_index) << 12) +
+                                           linear_address.offset;
+        return (static_cast<arch::address>(pde_large.page_frame_number) << 21) + offset_large;
     }
 
     const arch::pde pde{pde_large};
@@ -82,7 +81,6 @@ ntstatus DriverEntry(PDRIVER_OBJECT driver_object, PUNICODE_STRING) {
     for (auto &idte: idtr) {
         win::print_ex(0, 0, "%p\n", idte.get_handler());
     }
-
 
     return ntstatus::success;
 }
