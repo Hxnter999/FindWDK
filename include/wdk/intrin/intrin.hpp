@@ -356,6 +356,23 @@ namespace intrin {
         );
     }
 
+    ALWAYS_INLINE void ltr(arch::segment_selector tr) {
+        asm volatile(
+            "ltr %[tr_sel];"
+            :
+            : [tr_sel] "r"(tr)
+        );
+    }
+
+    ALWAYS_INLINE arch::segment_selector str() {
+        arch::segment_selector tr{};
+        asm volatile(
+            "str %[tr_sel];"
+            : [tr_sel] "=r"(tr)
+        );
+        return tr;
+    }
+
     ALWAYS_INLINE std::uint32_t stmxcsr() {
         std::uint32_t value;
         asm volatile(
