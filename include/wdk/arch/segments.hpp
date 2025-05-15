@@ -2,7 +2,7 @@
 #define WDK_ARCH_SEGMENTS_HPP
 
 namespace arch {
-    enum class table_indicator : bool {
+    enum class table_indicator : uint16_t {
         global,
         local
     };
