@@ -354,6 +354,7 @@ namespace intrin {
             :
             : "memory"
         );
+        return gdt;
     }
 
     ALWAYS_INLINE void lldt(arch::segment_selector ldt) {
