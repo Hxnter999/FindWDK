@@ -16,6 +16,17 @@ namespace arch {
         std::uint64_t p4_index: 9;
         std::uint64_t sign: 16;
 
+        std::uint64_t offset_1gb() const {
+            return (static_cast<std::uint64_t>(p2_index) << 21) |
+                   (static_cast<std::uint64_t>(p1_index) << 12) |
+                   offset;
+        }
+
+        std::uint64_t offset_2mb() const {
+            return (static_cast<std::uint64_t>(p1_index) << 12) |
+                   offset;
+        }
+
         constexpr address() = default;
 
         constexpr address(const is_address auto &src) {

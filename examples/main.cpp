@@ -10,38 +10,32 @@ arch::address translation_example(const arch::address pml4, const arch::address 
         return nullptr;
     }
 
-    const auto pdpte_large = static_cast<arch::pdpte_1gb *>(static_cast<arch::address>(pml4e.page_frame_number) << 12)[
-        linear_address.p3_index];
+    const auto pdpte_large = static_cast<arch::pdpte_1gb *>(
+        static_cast<arch::address>(pml4e.page_frame_number) << 12)[linear_address.p3_index];
     if (pml4e.present == false) {
         return nullptr;
     }
 
     // 1gb mapping
     if (pdpte_large.page_size == true) {
-        const std::uint64_t offset_large = (static_cast<std::uint64_t>(linear_address.p2_index) << 21) +
-                                           (static_cast<std::uint64_t>(linear_address.p1_index) << 12) +
-                                           linear_address.offset;
-
-        return (static_cast<arch::address>(pdpte_large.page_frame_number) << 30) + offset_large;
+        return (static_cast<arch::address>(pdpte_large.page_frame_number) << 30) + linear_address.offset_1gb();
     }
 
     const arch::pdpte pdpte{pdpte_large};
-    const auto pde_large = static_cast<arch::pde_2mb *>(static_cast<arch::address>(pdpte.page_frame_number) << 12)[
-        linear_address.p2_index];
+    const auto pde_large = static_cast<arch::pde_2mb *>(
+        static_cast<arch::address>(pdpte.page_frame_number) << 12)[linear_address.p2_index];
     if (pde_large.present == false) {
         return nullptr;
     }
 
     // 2mb mapping
     if (pde_large.page_size == true) {
-        const std::uint64_t offset_large = (static_cast<std::uint64_t>(linear_address.p1_index) << 12) +
-                                           linear_address.offset;
-        return (static_cast<arch::address>(pde_large.page_frame_number) << 21) + offset_large;
+        return (static_cast<arch::address>(pde_large.page_frame_number) << 21) + linear_address.offset_2mb();
     }
 
     const arch::pde pde{pde_large};
-    const auto pte = static_cast<arch::pte *>(static_cast<arch::address>(pde.page_frame_number) << 12)[linear_address.
-        p1_index];
+    const auto pte = static_cast<arch::pte *>(
+        static_cast<arch::address>(pde.page_frame_number) << 12)[linear_address.p1_index];
     if (pte.present == false) {
         return nullptr;
     }
