@@ -1839,61 +1839,59 @@ constexpr pool_type operator|(const pool_type lhs, const pool_type rhs) {
 struct UNICODE_STRING {
     std::uint16_t Length;
     std::uint16_t MaximumLength;
-    wchar_t *Buffer;
+    wchar_t* Buffer;
 };
 
-using PUNICODE_STRING = UNICODE_STRING *;
+using PUNICODE_STRING = UNICODE_STRING*;
 
-using PDRIVER_ADD_DEVICE = std::add_pointer_t<ntstatus(struct DRIVER_OBJECT *DriverObject,
-                                                       struct DEVICE_OBJECT *PhysicalDeviceObject)>;
+using PDRIVER_ADD_DEVICE = std::add_pointer_t<ntstatus(struct DRIVER_OBJECT* DriverObject, struct DEVICE_OBJECT* PhysicalDeviceObject)>;
 
 struct DRIVER_EXTENSION {
-    struct DRIVER_OBJECT *DriverObject;
+    struct DRIVER_OBJECT* DriverObject;
     PDRIVER_ADD_DEVICE AddDevice;
     std::uint32_t Count;
     UNICODE_STRING ServiceKeyName;
 };
 
-using PDRIVER_EXTENSION = DRIVER_EXTENSION *;
+using PDRIVER_EXTENSION = DRIVER_EXTENSION*;
 
-struct IRP {
-};
+struct IRP {};
 
-using PDRIVER_DISPATCH = std::add_pointer_t<ntstatus(DEVICE_OBJECT *DeviceObject, IRP *Irp)>;
+using PDRIVER_DISPATCH = std::add_pointer_t<ntstatus(DEVICE_OBJECT* DeviceObject, IRP* Irp)>;
 
-using PDRIVER_INITIALIZE = std::add_pointer_t<ntstatus(DRIVER_OBJECT *DriverObject, PUNICODE_STRING RegistryPath)>;
+using PDRIVER_INITIALIZE = std::add_pointer_t<ntstatus(DRIVER_OBJECT* DriverObject, PUNICODE_STRING RegistryPath)>;
 
-using PDRIVER_STARTIO = std::add_pointer_t<ntstatus(DRIVER_OBJECT *DriverObject, PUNICODE_STRING RegistryPath)>;
+using PDRIVER_STARTIO = std::add_pointer_t<ntstatus(DRIVER_OBJECT* DriverObject, PUNICODE_STRING RegistryPath)>;
 
-using PDRIVER_UNLOAD = std::add_pointer_t<ntstatus(DRIVER_OBJECT *DriverObject)>;
+using PDRIVER_UNLOAD = std::add_pointer_t<ntstatus(DRIVER_OBJECT* DriverObject)>;
 
 struct DRIVER_OBJECT {
     std::int16_t Type;
     std::int16_t Size;
-    struct DEVICE_OBJECT *DeviceObject;
+    struct DEVICE_OBJECT* DeviceObject;
     std::uint32_t Flags;
-    void *DriverStart;
+    void* DriverStart;
     std::uint32_t DriverSize;
-    void *DriverSection;
+    void* DriverSection;
     PDRIVER_EXTENSION DriverExtension;
     UNICODE_STRING DriverName;
     PUNICODE_STRING HardwareDatabase;
     /*PFAST_IO_DISPATCH*/
-    void *FastIoDispatch;
+    void* FastIoDispatch;
     PDRIVER_INITIALIZE DriverInit;
     PDRIVER_STARTIO DriverStartIo;
     PDRIVER_UNLOAD DriverUnload;
     PDRIVER_DISPATCH MajorFunction[28];
 };
 
-using PDRIVER_OBJECT = struct DRIVER_OBJECT *;
+using PDRIVER_OBJECT = struct DRIVER_OBJECT*;
 
 struct LIST_ENTRY {
-    LIST_ENTRY *Flink;
-    LIST_ENTRY *Blink;
+    LIST_ENTRY* Flink;
+    LIST_ENTRY* Blink;
 };
 
-using PLIST_ENTRY = LIST_ENTRY *;
+using PLIST_ENTRY = LIST_ENTRY*;
 
 
 struct OSVERSIONINFO {
@@ -1904,6 +1902,5 @@ struct OSVERSIONINFO {
     std::uint32_t PlatformId;
     wchar_t CSDVersion[128]; // Maintenance string for PSS usage
 };
-
 
 #endif // WDK_TYPES_HPP

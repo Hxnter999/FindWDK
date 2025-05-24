@@ -6,7 +6,7 @@
 namespace win {
     // variables
     extern "C" {
-    extern std::uint8_t *KeNumberProcessors;
+    extern std::uint8_t* KeNumberProcessors;
     extern arch::address MmBadPointer;
     extern std::uint32_t NtBuildNumber;
     extern /*tmp*/ arch::address PsInitialSystemProcess;
@@ -16,12 +16,13 @@ namespace win {
 
     // functions
     extern "C" {
-    // output parameters are taken by reference when they are expected, taken by a pointer when optional and defaulted if applicable
-    ntstatus DbgPrint(const char *fmt, ...);
+    // output parameters are taken by reference when they are expected, taken by a pointer when optional and defaulted
+    // if applicable
+    ntstatus DbgPrint(const char* fmt, ...);
 
-    ntstatus DbgPrintEx(std::uint32_t component_id, std::uint32_t level, const char *fmt, ...);
+    ntstatus DbgPrintEx(std::uint32_t component_id, std::uint32_t level, const char* fmt, ...);
 
-    std::uint32_t KeQueryActiveProcessorCount(std::uint64_t *active_processors_affinity = nullptr);
+    std::uint32_t KeQueryActiveProcessorCount(std::uint64_t* active_processors_affinity = nullptr);
 
     std::uint64_t KeSetSystemAffinityThreadEx(std::uint64_t affinity);
 
@@ -37,9 +38,9 @@ namespace win {
 
     bool MmIsAddressValid(arch::address virtual_address);
 
-    ntstatus RtlGetVersion(OSVERSIONINFO &version_output);
+    ntstatus RtlGetVersion(OSVERSIONINFO& version_output);
 
-    arch::address RtlFindExportedRoutineByName(arch::address image_base_address, const char *export_name);
+    arch::address RtlFindExportedRoutineByName(arch::address image_base_address, const char* export_name);
     } // extern "C"
 } // namespace win
 #endif // WDK_WINDOWS_DECLARATIONS_HPP

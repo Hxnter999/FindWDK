@@ -3,15 +3,11 @@
 
 namespace intrin::amd {
     ALWAYS_INLINE void stgi() {
-        asm volatile(
-            "stgi;"
-        );
+        asm volatile("stgi;");
     }
 
     ALWAYS_INLINE void clgi() {
-        asm volatile(
-            "clgi;"
-        );
+        asm volatile("clgi;");
     }
 } // namespace intrin::amd
 #endif // WDK_AMD_INTRINSICS_HPP
