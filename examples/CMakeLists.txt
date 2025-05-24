@@ -8,10 +8,10 @@ set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 wdk_add_driver(example_driver KMDF 1.15
-    main.cpp
+        main.cpp
 )
 
 # target_link_libraries(KmdfCppDriver WDK::HAL) // this is how you link against other wdk libraries
 target_compile_options(example_driver PRIVATE
-    -O3
+        -O3
 )

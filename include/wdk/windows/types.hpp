@@ -1868,7 +1868,7 @@ using PDRIVER_UNLOAD = std::add_pointer_t<ntstatus(DRIVER_OBJECT* DriverObject)>
 struct DRIVER_OBJECT {
     std::int16_t Type;
     std::int16_t Size;
-    struct DEVICE_OBJECT* DeviceObject;
+    DEVICE_OBJECT* DeviceObject;
     std::uint32_t Flags;
     void* DriverStart;
     std::uint32_t DriverSize;
@@ -1876,8 +1876,7 @@ struct DRIVER_OBJECT {
     PDRIVER_EXTENSION DriverExtension;
     UNICODE_STRING DriverName;
     PUNICODE_STRING HardwareDatabase;
-    /*PFAST_IO_DISPATCH*/
-    void* FastIoDispatch;
+    /*PFAST_IO_DISPATCH*/ void* FastIoDispatch;
     PDRIVER_INITIALIZE DriverInit;
     PDRIVER_STARTIO DriverStartIo;
     PDRIVER_UNLOAD DriverUnload;

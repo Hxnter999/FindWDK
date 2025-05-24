@@ -10,9 +10,7 @@ arch::address translation_example(const arch::address pml4, const arch::address 
         return nullptr;
     }
 
-    const auto pdpte_large = static_cast<arch::pdpte_1gb*>(
-            static_cast<arch::address>(pml4e.page_frame_number) << 12
-    )[linear_address.p3_index];
+    const auto pdpte_large = static_cast<arch::pdpte_1gb*>(static_cast<arch::address>(pml4e.page_frame_number) << 12)[linear_address.p3_index];
     if (pml4e.present == false) {
         return nullptr;
     }
@@ -23,9 +21,7 @@ arch::address translation_example(const arch::address pml4, const arch::address 
     }
 
     const arch::pdpte pdpte{pdpte_large};
-    const auto pde_large = static_cast<arch::pde_2mb*>(
-            static_cast<arch::address>(pdpte.page_frame_number) << 12
-    )[linear_address.p2_index];
+    const auto pde_large = static_cast<arch::pde_2mb*>(static_cast<arch::address>(pdpte.page_frame_number) << 12)[linear_address.p2_index];
     if (pde_large.present == false) {
         return nullptr;
     }
@@ -36,8 +32,7 @@ arch::address translation_example(const arch::address pml4, const arch::address 
     }
 
     const arch::pde pde{pde_large};
-    const auto pte =
-            static_cast<arch::pte*>(static_cast<arch::address>(pde.page_frame_number) << 12)[linear_address.p1_index];
+    const auto pte = static_cast<arch::pte*>(static_cast<arch::address>(pde.page_frame_number) << 12)[linear_address.p1_index];
     if (pte.present == false) {
         return nullptr;
     }
