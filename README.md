@@ -90,16 +90,16 @@ target_link_libraries(MinifilterDriver WDK::FLTMGR)
 
 FindWDK is licensed under the OSI-approved 3-clause BSD license. You can freely use it in your commercial or opensource
 software.
-Additional components added by Hxnter999 are licensed under the MIT License, unless otherwise specified.
+Additional components introduced in this fork are licensed under the MIT License, unless otherwise specified.
 
 # Version history
 
 ## Version 2.0.0
 
 - Remove msvc support.
-- Add clang/gcc support.
+- Add clang and gcc support.
 - Remove the ability to include the headers provided by microsoft as they are obviously not compatible with other
-  compilers and otherwise require a lot of things to be setup properly
+  compilers or otherwise require a lot of things to be setup properly
 - Add a small header library to provide useful intrinsics and declarations from the wdk.
 
 ## ~~Version 1.0.2 (TBD)~~
