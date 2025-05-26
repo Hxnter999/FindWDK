@@ -7,6 +7,18 @@ namespace arch {
                          (std::is_pointer_v<T> || std::is_integral_v<T> || std::is_convertible_v<T, void*> || sizeof(T) == sizeof(std::uint64_t));
 
     struct address {
+    private:
+        template <is_address T>
+        constexpr address& assign(const T& from) {
+            if constexpr (std::is_integral_v<T> && sizeof(T) < sizeof(std::uint64_t)) {
+                *this = static_cast<std::uint64_t>(from);
+            } else {
+                *this = std::bit_cast<address>(from);
+            }
+            return *this;
+        }
+
+    public:
         std::uint64_t offset   : 12 {};
         std::uint64_t p1_index : 9 {};
         std::uint64_t p2_index : 9 {};
@@ -14,31 +26,22 @@ namespace arch {
         std::uint64_t p4_index : 9 {};
         std::uint64_t sign     : 16 {};
 
-        std::uint64_t offset_1gb() const {
+        constexpr std::uint64_t offset_1gb() const {
             return (static_cast<std::uint64_t>(p2_index) << 21) | (static_cast<std::uint64_t>(p1_index) << 12) | offset;
         }
 
-        std::uint64_t offset_2mb() const {
+        constexpr std::uint64_t offset_2mb() const {
             return (static_cast<std::uint64_t>(p1_index) << 12) | offset;
         }
 
         constexpr address() = default;
 
-        constexpr address(const is_address auto& src) {
-            if constexpr (sizeof(src) < sizeof(address) && std::is_integral_v<decltype(src)>) {
-                *this = std::bit_cast<address>(static_cast<std::uint64_t>(src));
-            } else {
-                *this = std::bit_cast<address>(src);
-            }
+        constexpr address(const is_address auto& from) {
+            return assign(from);
         }
 
-        constexpr address& operator=(const is_address auto& src) {
-            if constexpr (sizeof(src) < sizeof(address) && std::is_integral_v<decltype(src)>) {
-                *this = std::bit_cast<address>(static_cast<std::uint64_t>(src));
-            } else {
-                *this = std::bit_cast<address>(src);
-            }
-            return *this;
+        constexpr address& operator=(const is_address auto& from) {
+            return assign(from);
         }
 
         constexpr operator void*() const {
@@ -54,7 +57,7 @@ namespace arch {
         }
 
         explicit constexpr operator bool() const {
-            return static_cast<bool>(std::bit_cast<std::uint64_t>(*this));
+            return static_cast<bool>(static_cast<std::uint64_t>(*this));
         }
 
         constexpr address operator*() const {
@@ -93,11 +96,11 @@ namespace arch {
         }
 
         friend constexpr address operator<<(const address& lhs, const is_address auto& rhs) {
-            return static_cast<std::uint64_t>(lhs) << static_cast<std::uint64_t>(rhs);
+            return lhs << static_cast<address>(rhs);
         }
 
         friend constexpr address operator<<(const is_address auto& lhs, const address& rhs) {
-            return static_cast<std::uint64_t>(lhs) << static_cast<std::uint64_t>(rhs);
+            return static_cast<address>(lhs) << rhs;
         }
 
 
@@ -106,11 +109,11 @@ namespace arch {
         }
 
         friend constexpr address operator>>(const address& lhs, const is_address auto& rhs) {
-            return static_cast<std::uint64_t>(lhs) >> static_cast<std::uint64_t>(rhs);
+            return lhs >> static_cast<address>(rhs);
         }
 
         friend constexpr address operator>>(const is_address auto& lhs, const address& rhs) {
-            return static_cast<std::uint64_t>(lhs) >> static_cast<std::uint64_t>(rhs);
+            return static_cast<address>(lhs) >> rhs;
         }
 
 
@@ -257,11 +260,11 @@ namespace arch {
     static_assert(sizeof(page_entry_1gb) == sizeof(std::uint64_t), "arch::page_entry_1gb size is incorrect");
 
     using pml4e = page_entry_4kb;
-    using pdpte = page_entry_4kb;
+    using pdpe = page_entry_4kb;
     using pde = page_entry_4kb;
     using pte = page_entry_4kb;
 
-    using pdpte_1gb = page_entry_1gb;
+    using pdpe_1gb = page_entry_1gb;
     using pde_2mb = page_entry_2mb;
 } // namespace arch
 

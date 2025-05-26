@@ -10,18 +10,18 @@ arch::address translation_example(const arch::address pml4, const arch::address 
         return nullptr;
     }
 
-    const auto pdpte_large = static_cast<arch::pdpte_1gb*>(static_cast<arch::address>(pml4e.page_frame_number) << 12)[linear_address.p3_index];
+    const auto pdpe_large = static_cast<arch::pdpe_1gb*>(static_cast<arch::address>(pml4e.page_frame_number) << 12)[linear_address.p3_index];
     if (pml4e.present == false) {
         return nullptr;
     }
 
     // 1gb mapping
-    if (pdpte_large.page_size == true) {
-        return (static_cast<arch::address>(pdpte_large.page_frame_number) << 30) + linear_address.offset_1gb();
+    if (pdpe_large.page_size == true) {
+        return (static_cast<arch::address>(pdpe_large.page_frame_number) << 30) + linear_address.offset_1gb();
     }
 
-    const arch::pdpte pdpte{pdpte_large};
-    const auto pde_large = static_cast<arch::pde_2mb*>(static_cast<arch::address>(pdpte.page_frame_number) << 12)[linear_address.p2_index];
+    const arch::pdpe pdpe{pdpe_large};
+    const auto pde_large = static_cast<arch::pde_2mb*>(static_cast<arch::address>(pdpe.page_frame_number) << 12)[linear_address.p2_index];
     if (pde_large.present == false) {
         return nullptr;
     }

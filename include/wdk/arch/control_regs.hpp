@@ -5,9 +5,9 @@ namespace arch {
     struct cr0 : win::scalar_convertible<cr0, std::uint64_t> {
         using win::scalar_convertible<cr0, std::uint64_t>::scalar_convertible;
 
-        std::uint64_t protection_enabled  : 1 {};
+        std::uint64_t protection          : 1 {};
         std::uint64_t monitor_coprocessor : 1 {};
-        std::uint64_t emulation           : 1 {};
+        std::uint64_t emulate_fpu         : 1 {};
         std::uint64_t task_switched       : 1 {};
         std::uint64_t extension_type      : 1 {};
         std::uint64_t numeric_error       : 1 {};
@@ -46,29 +46,32 @@ namespace arch {
     struct cr4 : win::scalar_convertible<cr4, std::uint64_t> {
         using win::scalar_convertible<cr4, std::uint64_t>::scalar_convertible;
 
-        std::uint64_t virtual_8086_mode                 : 1 {};
-        std::uint64_t protected_mode_virtual_interrupts : 1 {};
-        std::uint64_t time_stamp_disable                : 1 {};
-        std::uint64_t debugging_extensions              : 1 {};
-        std::uint64_t page_size_extensions              : 1 {};
-        std::uint64_t physical_address_extensions       : 1 {};
-        std::uint64_t machine_check                     : 1 {};
-        std::uint64_t page_global                       : 1 {};
-        std::uint64_t performance_monitoring_counter    : 1 {};
-        std::uint64_t os_fxsave_fxrstor                 : 1 {};
-        std::uint64_t os_unmasked_exception             : 1 {};
-        std::uint64_t usermode_instruction_prevention   : 1 {};
-        std::uint64_t linear_address_57bits             : 1 {};
-        std::uint64_t reserved1                         : 3 {};
-        std::uint64_t fs_gs_base                        : 1 {};
-        std::uint64_t process_context_identifier        : 1 {};
-        std::uint64_t xsave_extended_state              : 1 {};
-        std::uint64_t reserved2                         : 1 {};
-        std::uint64_t supervisor_execution_prevention   : 1 {};
-        std::uint64_t supervisor_access_prevention      : 1 {};
-        std::uint64_t protection_key                    : 1 {};
-        std::uint64_t control_flow_enforcement          : 1 {};
-        std::uint64_t reserved3                         : 40 {};
+        std::uint64_t virtual_8086_mode_extensions       : 1 {};
+        std::uint64_t protected_mode_virtual_interrupts  : 1 {};
+        std::uint64_t time_stamp_disable                 : 1 {};
+        std::uint64_t debugging_extensions               : 1 {};
+        std::uint64_t page_size_extensions               : 1 {};
+        std::uint64_t physical_address_extensions        : 1 {};
+        std::uint64_t machine_check                      : 1 {};
+        std::uint64_t page_global                        : 1 {};
+        std::uint64_t performance_monitoring_counter     : 1 {};
+        std::uint64_t os_fxsave_fxrstor                  : 1 {};
+        std::uint64_t os_xmm_exception                   : 1 {};
+        std::uint64_t usermode_instruction_prevention    : 1 {};
+        std::uint64_t linear_address_57bits              : 1 {};
+        std::uint64_t ia32_vmx                           : 1 {};
+        std::uint64_t ia32_smx                           : 1 {};
+        std::uint64_t reserved1                          : 1 {};
+        std::uint64_t fs_gs_base                         : 1 {};
+        std::uint64_t process_context_identifier         : 1 {};
+        std::uint64_t os_xsave                           : 1 {};
+        std::uint64_t ia32_keylocker                     : 1 {};
+        std::uint64_t supervisor_execution_prevention    : 1 {};
+        std::uint64_t supervisor_access_prevention       : 1 {};
+        std::uint64_t protection_key                     : 1 {};
+        std::uint64_t control_flow_enforcement           : 1 {};
+        std::uint64_t ia32_protection_key_for_supervisor : 1 {};
+        std::uint64_t reserved3                          : 39 {};
     } __attribute__((packed));
 
     static_assert(sizeof(cr4) == sizeof(std::uint64_t), "arch::cr4 size is incorrect");
@@ -92,18 +95,19 @@ namespace arch {
     struct dr6 : win::scalar_convertible<dr6, std::uint64_t> {
         using win::scalar_convertible<dr6, std::uint64_t>::scalar_convertible;
 
-        std::uint64_t bp0_condition_detected   : 1 {};
-        std::uint64_t bp1_condition_detected   : 1 {};
-        std::uint64_t bp2_condition_detected   : 1 {};
-        std::uint64_t bp3_condition_detected   : 1 {};
-        std::uint64_t reserved1                : 7 {};
-        std::uint64_t bus_lock_detected        : 1 {};
-        std::uint64_t reserved2                : 1 {};
-        std::uint64_t bp_debug_access_detected : 1 {};
-        std::uint64_t bp_single_step           : 1 {};
-        std::uint64_t bp_task_switch           : 1 {};
-        std::uint64_t reserved3                : 16 {};
-        std::uint64_t reserved4                : 32 {};
+        std::uint64_t bp0_condition_detected               : 1 {};
+        std::uint64_t bp1_condition_detected               : 1 {};
+        std::uint64_t bp2_condition_detected               : 1 {};
+        std::uint64_t bp3_condition_detected               : 1 {};
+        std::uint64_t reserved1                            : 7 {};
+        std::uint64_t amd64_bus_lock_detected              : 1 {};
+        std::uint64_t reserved2                            : 1 {};
+        std::uint64_t bp_debug_access_detected             : 1 {};
+        std::uint64_t bp_single_step                       : 1 {};
+        std::uint64_t bp_task_switch                       : 1 {};
+        std::uint64_t ia32_restricted_transactional_memory : 1 {};
+        std::uint64_t reserved3                            : 15 {};
+        std::uint64_t reserved4                            : 32 {};
     } __attribute__((packed));
 
     static_assert(sizeof(dr6) == sizeof(std::uint64_t), "arch::dr6 size is incorrect");
@@ -111,29 +115,30 @@ namespace arch {
     struct dr7 : win::scalar_convertible<dr7, std::uint64_t> {
         using win::scalar_convertible<dr7, std::uint64_t>::scalar_convertible;
 
-        std::uint64_t local_bp0      : 1 {};
-        std::uint64_t global_bp0     : 1 {};
-        std::uint64_t local_bp1      : 1 {};
-        std::uint64_t global_bp1     : 1 {};
-        std::uint64_t local_bp2      : 1 {};
-        std::uint64_t global_bp2     : 1 {};
-        std::uint64_t local_bp3      : 1 {};
-        std::uint64_t global_bp4     : 1 {};
-        std::uint64_t local_bp       : 1 {};
-        std::uint64_t global_bp      : 1 {};
-        std::uint64_t reserved1      : 1 {};
-        std::uint64_t reserved2      : 2 {};
-        std::uint64_t general_detect : 1 {};
-        std::uint64_t reserved3      : 2 {};
-        bp_type bp0_type             : 2 {};
-        std::uint64_t bp0_length     : 2 {};
-        bp_type bp1_type             : 2 {};
-        std::uint64_t bp1_length     : 2 {};
-        bp_type bp2_type             : 2 {};
-        std::uint64_t bp2_length     : 2 {};
-        bp_type bp3_type             : 2 {};
-        std::uint64_t bp3_length     : 2 {};
-        std::uint64_t reserved4      : 32 {};
+        std::uint64_t local_bp0                            : 1 {};
+        std::uint64_t global_bp0                           : 1 {};
+        std::uint64_t local_bp1                            : 1 {};
+        std::uint64_t global_bp1                           : 1 {};
+        std::uint64_t local_bp2                            : 1 {};
+        std::uint64_t global_bp2                           : 1 {};
+        std::uint64_t local_bp3                            : 1 {};
+        std::uint64_t global_bp3                           : 1 {};
+        std::uint64_t local_bp                             : 1 {};
+        std::uint64_t global_bp                            : 1 {};
+        std::uint64_t reserved1                            : 1 {};
+        std::uint64_t ia32_restricted_transactional_memory : 1 {};
+        std::uint64_t reserved2                            : 1 {};
+        std::uint64_t general_detect                       : 1 {};
+        std::uint64_t reserved3                            : 2 {};
+        bp_type bp0_type                                   : 2 {};
+        std::uint64_t bp0_length                           : 2 {};
+        bp_type bp1_type                                   : 2 {};
+        std::uint64_t bp1_length                           : 2 {};
+        bp_type bp2_type                                   : 2 {};
+        std::uint64_t bp2_length                           : 2 {};
+        bp_type bp3_type                                   : 2 {};
+        std::uint64_t bp3_length                           : 2 {};
+        std::uint64_t reserved4                            : 32 {};
     } __attribute__((packed));
 
     static_assert(sizeof(dr7) == sizeof(std::uint64_t), "arch::dr7 size is incorrect");

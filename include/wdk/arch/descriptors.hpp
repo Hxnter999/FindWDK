@@ -73,6 +73,7 @@ namespace arch {
         std::uint8_t type                        : 4 {};
         std::uint8_t must_be_zero                : 1 {};
         std::uint8_t descriptor_privilege_level  : 2 {};
+        std::uint8_t present                     : 1 {};
         std::uint16_t offset_mid{};
         std::uint32_t offset_high{};
         std::uint32_t reserved2 : 32 {};
@@ -90,6 +91,54 @@ namespace arch {
     } __attribute__((packed));
 
     static_assert(sizeof(interrupt_descriptor) == 16, "arch::interrupt_descriptor size is incorrect");
+
+    enum class exception_vector {
+        divide_error = 0,
+        debug = 1,
+        nmi = 2,
+        breakpoint = 3,
+        overflow = 4,
+        bound_range_exceeded = 5,
+        invalid_opcode = 6,
+        device_not_available = 7,
+        double_fault = 8,
+        coprocessor_segment_overrun = 9,
+        invalid_tss = 10,
+        segment_not_present = 11,
+        stack_segment_fault = 12,
+        general_protection = 13,
+        page_fault = 14,
+        x87_floating_point_error = 16,
+        alignment_check = 17,
+        machine_check = 18,
+        simd_floating_point_error = 19,
+        virtualization_exception = 20,
+        control_protection = 21,
+        hypervisor_injection_exception = 28,
+        vmm_communication_exception = 29,
+        security_exception = 30
+    };
+
+    constexpr bool exception_has_error_code(const exception_vector v) {
+        switch (v) {
+            using enum exception_vector;
+
+            case double_fault:
+            case invalid_tss:
+            case segment_not_present:
+            case stack_segment_fault:
+            case general_protection:
+            case page_fault:
+            case alignment_check:
+            case control_protection:
+            case vmm_communication_exception:
+            case security_exception:
+                return true;
+
+            default:
+                return false;
+        }
+    }
 } // namespace arch
 
 #endif // WDK_ARCH_DESCRIPTORS_HPP
