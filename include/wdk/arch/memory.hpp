@@ -3,8 +3,7 @@
 
 namespace arch {
     template <typename T>
-    concept is_address = std::is_trivially_copyable_v<T> &&
-                         (std::is_pointer_v<T> || std::is_integral_v<T> || std::is_convertible_v<T, void*> || sizeof(T) == sizeof(std::uint64_t));
+    concept is_address = std::is_trivially_copyable_v<T> && sizeof(T) <= 8 && (std::is_pointer_v<T> || std::is_integral_v<T> || std::is_null_pointer_v<T>);
 
     struct address {
     private:
@@ -117,6 +116,49 @@ namespace arch {
         }
 
 
+        friend constexpr address operator&(const address& lhs, const address& rhs) {
+            return static_cast<std::uint64_t>(lhs) & static_cast<std::uint64_t>(rhs);
+        }
+
+        friend constexpr address operator&(const address& lhs, const is_address auto& rhs) {
+            return lhs & static_cast<address>(rhs);
+        }
+
+        friend constexpr address operator&(const is_address auto& lhs, const address& rhs) {
+            return static_cast<address>(lhs) & rhs;
+        }
+
+
+        friend constexpr address operator|(const address& lhs, const address& rhs) {
+            return static_cast<std::uint64_t>(lhs) | static_cast<std::uint64_t>(rhs);
+        }
+
+        friend constexpr address operator|(const address& lhs, const is_address auto& rhs) {
+            return lhs | static_cast<address>(rhs);
+        }
+
+        friend constexpr address operator|(const is_address auto& lhs, const address& rhs) {
+            return static_cast<address>(lhs) | rhs;
+        }
+
+
+        friend constexpr address operator^(const address& lhs, const address& rhs) {
+            return static_cast<std::uint64_t>(lhs) ^ static_cast<std::uint64_t>(rhs);
+        }
+
+        friend constexpr address operator^(const address& lhs, const is_address auto& rhs) {
+            return lhs ^ static_cast<address>(rhs);
+        }
+
+        friend constexpr address operator^(const is_address auto& lhs, const address& rhs) {
+            return static_cast<address>(lhs) ^ rhs;
+        }
+
+
+        constexpr address operator~() const {
+            return ~static_cast<std::uint64_t>(*this);
+        }
+
         constexpr address& operator+=(const address& delta) {
             return *this = *this + delta;
         }
@@ -149,6 +191,30 @@ namespace arch {
             return *this = *this >> shift;
         }
 
+        constexpr address& operator&=(const address& other) {
+            return *this = *this & other;
+        }
+
+        constexpr address& operator&=(const is_address auto& other) {
+            return *this = *this & other;
+        }
+
+        constexpr address& operator|=(const address& other) {
+            return *this = *this | other;
+        }
+
+        constexpr address& operator|=(const is_address auto& other) {
+            return *this = *this | other;
+        }
+
+        constexpr address& operator^=(const address& val) {
+            return *this = *this ^ val;
+        }
+
+        constexpr address& operator^=(const is_address auto& val) {
+            return *this = *this ^ val;
+        }
+
         constexpr address& operator++() {
             *this += 1;
             return *this;
@@ -171,22 +237,40 @@ namespace arch {
             return temp;
         }
 
-        constexpr bool operator==(const address& other) const = default;
-
-        constexpr bool operator==(const is_address auto& other) const {
-            return *this == static_cast<address>(other);
+        friend constexpr bool operator==(const address& lhs, const address& rhs) {
+            return static_cast<std::uint64_t>(lhs) == static_cast<std::uint64_t>(rhs);
         }
 
-        constexpr bool operator!=(const address& other) const = default;
-
-        constexpr bool operator!=(const is_address auto& other) const {
-            return *this != static_cast<address>(other);
+        friend constexpr bool operator==(const address& lhs, const is_address auto& rhs) {
+            return lhs == static_cast<address>(rhs);
         }
 
-        constexpr auto operator<=>(const address& other) const = default;
+        friend constexpr bool operator==(const is_address auto& lhs, const address& rhs) {
+            return static_cast<address>(lhs) == rhs;
+        }
 
-        constexpr auto operator<=>(const is_address auto& other) const {
-            return *this <=> static_cast<address>(other);
+        friend constexpr bool operator!=(const address& lhs, const address& rhs) {
+            return !(lhs == rhs);
+        }
+
+        friend constexpr bool operator!=(const address& lhs, const is_address auto& rhs) {
+            return !(lhs == rhs);
+        }
+
+        friend constexpr bool operator!=(const is_address auto& lhs, const address& rhs) {
+            return !(lhs == rhs);
+        }
+
+        friend constexpr auto operator<=>(const address& lhs, const address& rhs) {
+            return static_cast<std::uint64_t>(lhs) <=> static_cast<std::uint64_t>(rhs);
+        }
+
+        friend constexpr auto operator<=>(const address& lhs, const is_address auto& rhs) {
+            return lhs <=> static_cast<address>(rhs);
+        }
+
+        friend constexpr auto operator<=>(const is_address auto& lhs, const address& rhs) {
+            return static_cast<address>(lhs) <=> rhs;
         }
     } __attribute__((packed));
 
