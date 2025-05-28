@@ -276,8 +276,8 @@ namespace arch {
 
     static_assert(sizeof(address) == sizeof(std::uint64_t), "arch::address size is incorrect");
 
-    struct page_entry_4kb : win::scalar_convertible<page_entry_4kb, std::uint64_t> {
-        using win::scalar_convertible<page_entry_4kb, std::uint64_t>::scalar_convertible;
+    struct page_entry_4kb {
+        MAKE_SCALAR_CONVERTIBLE(page_entry_4kb, std::uint64_t)
 
         std::uint64_t present               : 1 {};
         std::uint64_t write                 : 1 {};
@@ -297,8 +297,8 @@ namespace arch {
 
     static_assert(sizeof(page_entry_4kb) == sizeof(std::uint64_t), "arch::page_entry_4kb size is incorrect");
 
-    struct page_entry_2mb : win::scalar_convertible<page_entry_2mb, std::uint64_t> {
-        using win::scalar_convertible<page_entry_2mb, std::uint64_t>::scalar_convertible;
+    struct page_entry_2mb {
+        MAKE_SCALAR_CONVERTIBLE(page_entry_2mb, std::uint64_t)
 
         std::uint64_t present               : 1 {};
         std::uint64_t write                 : 1 {};
@@ -320,8 +320,8 @@ namespace arch {
 
     static_assert(sizeof(page_entry_2mb) == sizeof(std::uint64_t), "arch::page_entry_2mb size is incorrect");
 
-    struct page_entry_1gb : win::scalar_convertible<page_entry_1gb, std::uint64_t> {
-        using win::scalar_convertible<page_entry_1gb, std::uint64_t>::scalar_convertible;
+    struct page_entry_1gb {
+        MAKE_SCALAR_CONVERTIBLE(page_entry_1gb, std::uint64_t)
 
         std::uint64_t present               : 1 {};
         std::uint64_t write                 : 1 {};

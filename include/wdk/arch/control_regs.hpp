@@ -2,8 +2,8 @@
 #define WDK_ARCH_CONTROL_REGS_HPP
 
 namespace arch {
-    struct cr0 : win::scalar_convertible<cr0, std::uint64_t> {
-        using win::scalar_convertible<cr0, std::uint64_t>::scalar_convertible;
+    struct cr0 {
+        MAKE_SCALAR_CONVERTIBLE(cr0, std::uint64_t)
 
         std::uint64_t protection          : 1 {};
         std::uint64_t monitor_coprocessor : 1 {};
@@ -22,16 +22,16 @@ namespace arch {
         std::uint64_t reserved4           : 32 {};
     } __attribute__((packed));
 
-    struct cr2 : win::scalar_convertible<cr2, std::uint64_t> {
-        using win::scalar_convertible<cr2, std::uint64_t>::scalar_convertible;
+    struct cr2 {
+        MAKE_SCALAR_CONVERTIBLE(cr2, std::uint64_t)
 
         std::uint64_t page_fault_linear_address{};
     } __attribute__((packed));
 
     static_assert(sizeof(cr2) == sizeof(std::uint64_t), "arch::cr2 size is incorrect");
 
-    struct cr3 : win::scalar_convertible<cr3, std::uint64_t> {
-        using win::scalar_convertible<cr3, std::uint64_t>::scalar_convertible;
+    struct cr3 {
+        MAKE_SCALAR_CONVERTIBLE(cr3, std::uint64_t)
 
         std::uint64_t reserved1         : 3 {};
         std::uint64_t write_through     : 1 {};
@@ -43,8 +43,8 @@ namespace arch {
 
     static_assert(sizeof(cr3) == sizeof(std::uint64_t), "arch::cr3 size is incorrect");
 
-    struct cr4 : win::scalar_convertible<cr4, std::uint64_t> {
-        using win::scalar_convertible<cr4, std::uint64_t>::scalar_convertible;
+    struct cr4 {
+        MAKE_SCALAR_CONVERTIBLE(cr4, std::uint64_t)
 
         std::uint64_t virtual_8086_mode_extensions       : 1 {};
         std::uint64_t protected_mode_virtual_interrupts  : 1 {};
@@ -76,8 +76,8 @@ namespace arch {
 
     static_assert(sizeof(cr4) == sizeof(std::uint64_t), "arch::cr4 size is incorrect");
 
-    struct cr8 : win::scalar_convertible<cr8, std::uint64_t> {
-        using win::scalar_convertible<cr8, std::uint64_t>::scalar_convertible;
+    struct cr8 {
+        MAKE_SCALAR_CONVERTIBLE(cr8, std::uint64_t)
 
         std::uint64_t task_priority : 4 {};
         std::uint64_t reserved      : 60 {};
@@ -92,8 +92,8 @@ namespace arch {
         read_write
     };
 
-    struct dr6 : win::scalar_convertible<dr6, std::uint64_t> {
-        using win::scalar_convertible<dr6, std::uint64_t>::scalar_convertible;
+    struct dr6 {
+        MAKE_SCALAR_CONVERTIBLE(dr6, std::uint64_t)
 
         std::uint64_t bp0_condition_detected               : 1 {};
         std::uint64_t bp1_condition_detected               : 1 {};
@@ -112,8 +112,8 @@ namespace arch {
 
     static_assert(sizeof(dr6) == sizeof(std::uint64_t), "arch::dr6 size is incorrect");
 
-    struct dr7 : win::scalar_convertible<dr7, std::uint64_t> {
-        using win::scalar_convertible<dr7, std::uint64_t>::scalar_convertible;
+    struct dr7 {
+        MAKE_SCALAR_CONVERTIBLE(dr7, std::uint64_t)
 
         std::uint64_t local_bp0                            : 1 {};
         std::uint64_t global_bp0                           : 1 {};

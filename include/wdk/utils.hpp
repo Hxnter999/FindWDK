@@ -13,31 +13,25 @@
 #define BEGIN_INTEL_SYNTAX ".intel_syntax noprefix;"
 #define END_INTEL_SYNTAX ".att_syntax;"
 
-// custom helper types
-namespace win {
-    // mostly used for bitfields throughout the library, for example MSRs.
-    template <typename Derived, typename Alias>
-    struct scalar_convertible {
-        constexpr scalar_convertible() = default;
+// i have to admit, i dont like this.
+// enables implicit conversions between a trivial struct and a scalar type
+#define MAKE_SCALAR_CONVERTIBLE(THIS, TYPE)                                                                                                                    \
+    constexpr THIS() = default;                                                                                                                                \
+    constexpr THIS(const THIS&) = default;                                                                                                                     \
+    constexpr THIS& operator=(const THIS&) = default;                                                                                                          \
+                                                                                                                                                               \
+    constexpr THIS(TYPE value) {                                                                                                                               \
+        *this = std::bit_cast<THIS>(value);                                                                                                                    \
+    }                                                                                                                                                          \
+                                                                                                                                                               \
+    constexpr THIS& operator=(TYPE value) {                                                                                                                    \
+        *this = std::bit_cast<THIS>(value);                                                                                                                    \
+        return *this;                                                                                                                                          \
+    }                                                                                                                                                          \
+                                                                                                                                                               \
+    constexpr operator TYPE() const {                                                                                                                          \
+        return std::bit_cast<TYPE>(*this);                                                                                                                     \
+    }
 
-        constexpr scalar_convertible(const Alias& v) {
-            assign_from(v);
-        }
-
-        constexpr Derived& operator=(const Alias& v) {
-            return assign_from(v);
-        }
-
-        constexpr operator Alias() const {
-            return std::bit_cast<Alias>(*static_cast<const Derived*>(this));
-        }
-
-    private:
-        constexpr Derived& assign_from(const Alias& v) {
-            *static_cast<Derived*>(this) = std::bit_cast<Derived>(v);
-            return *static_cast<Derived*>(this);
-        }
-    } __attribute__((packed));
-} // namespace win
 
 #endif // WDK_UTILS_HPP

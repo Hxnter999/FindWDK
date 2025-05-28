@@ -5,8 +5,8 @@ namespace arch {
     template <typename T>
     concept is_msr = requires { T::number; };
 
-    struct efer : win::scalar_convertible<efer, std::uint64_t> {
-        using win::scalar_convertible<efer, std::uint64_t>::scalar_convertible;
+    struct efer {
+        MAKE_SCALAR_CONVERTIBLE(efer, std::uint64_t)
         static constexpr std::uint32_t number = 0xC000'0080;
 
         std::uint64_t syscall_extensions                  : 1 {};
@@ -29,82 +29,82 @@ namespace arch {
     };
 
     // virtual machine host save physical address as per the AMD manual
-    struct vmhs_pa : win::scalar_convertible<vmhs_pa, std::uint64_t> {
-        using win::scalar_convertible<vmhs_pa, std::uint64_t>::scalar_convertible;
+    struct vmhs_pa {
+        MAKE_SCALAR_CONVERTIBLE(vmhs_pa, std::uint64_t)
         static constexpr std::uint32_t number = 0xC001'0117;
 
         std::uint64_t value{};
     };
 
-    struct lstar : win::scalar_convertible<lstar, std::uint64_t> {
-        using win::scalar_convertible<lstar, std::uint64_t>::scalar_convertible;
+    struct lstar {
+        MAKE_SCALAR_CONVERTIBLE(lstar, std::uint64_t)
         static constexpr std::uint32_t number = 0xC000'0082;
 
         std::uint64_t value{};
     };
 
-    struct cstar : win::scalar_convertible<lstar, std::uint64_t> {
-        using win::scalar_convertible<lstar, std::uint64_t>::scalar_convertible;
+    struct cstar {
+        MAKE_SCALAR_CONVERTIBLE(cstar, std::uint64_t)
         static constexpr std::uint32_t number = 0xC000'0083;
 
         std::uint64_t value{};
     };
 
-    struct syscall_flag_mask : win::scalar_convertible<lstar, std::uint64_t> {
-        using win::scalar_convertible<lstar, std::uint64_t>::scalar_convertible;
+    struct syscall_flag_mask {
+        MAKE_SCALAR_CONVERTIBLE(syscall_flag_mask, std::uint64_t)
         static constexpr std::uint32_t number = 0xC000'0084;
 
         std::uint64_t value{};
     };
 
     // max performance
-    struct mperf : win::scalar_convertible<mperf, std::uint64_t> {
-        using win::scalar_convertible<mperf, std::uint64_t>::scalar_convertible;
+    struct mperf {
+        MAKE_SCALAR_CONVERTIBLE(mperf, std::uint64_t)
         static constexpr std::uint32_t number = 0xC000'00E7;
 
         std::uint64_t max_core_clocks_counter{};
     };
 
     // actual performance
-    struct aperf : win::scalar_convertible<aperf, std::uint64_t> {
-        using win::scalar_convertible<aperf, std::uint64_t>::scalar_convertible;
+    struct aperf {
+        MAKE_SCALAR_CONVERTIBLE(aperf, std::uint64_t)
         static constexpr std::uint32_t number = 0xC000'00E8;
 
         std::uint64_t actual_core_clocks_counter{};
     };
 
     // instructions retired
-    struct irperf : win::scalar_convertible<irperf, std::uint64_t> {
-        using win::scalar_convertible<irperf, std::uint64_t>::scalar_convertible;
+    struct irperf {
+        MAKE_SCALAR_CONVERTIBLE(irperf, std::uint64_t)
         static constexpr std::uint32_t number = 0xC000'00E9;
 
         std::uint64_t instructions_retired_counter : 48 {};
         std::uint64_t reserved                     : 16 {};
     };
 
-    struct fs_base : win::scalar_convertible<fs_base, std::uint64_t> {
-        using win::scalar_convertible<fs_base, std::uint64_t>::scalar_convertible;
+    struct fs_base {
+        MAKE_SCALAR_CONVERTIBLE(fs_base, std::uint64_t)
         static constexpr std::uint32_t number = 0xC000'0100;
 
         std::uint64_t value{};
     };
 
-    struct gs_base : win::scalar_convertible<gs_base, std::uint64_t> {
-        using win::scalar_convertible<gs_base, std::uint64_t>::scalar_convertible;
+    struct gs_base {
+        MAKE_SCALAR_CONVERTIBLE(gs_base, std::uint64_t)
         static constexpr std::uint32_t number = 0xC000'0101;
 
         std::uint64_t value{};
     };
 
-    struct kernel_gs_base : win::scalar_convertible<kernel_gs_base, std::uint64_t> {
-        using win::scalar_convertible<kernel_gs_base, std::uint64_t>::scalar_convertible;
+    struct kernel_gs_base {
+        MAKE_SCALAR_CONVERTIBLE(kernel_gs_base, std::uint64_t)
         static constexpr std::uint32_t number = 0xC000'0102;
 
         std::uint64_t value{};
     };
 
-    struct auxilary_tsc : win::scalar_convertible<kernel_gs_base, std::uint64_t> {
-        using win::scalar_convertible<kernel_gs_base, std::uint64_t>::scalar_convertible;
+    struct auxilary_tsc {
+        MAKE_SCALAR_CONVERTIBLE(auxilary_tsc, std::uint64_t)
         static constexpr std::uint32_t number = 0xC000'0103;
 
         std::uint64_t auxilary_tsc_data : 32 {};
