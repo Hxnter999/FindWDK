@@ -2,114 +2,82 @@
 
 CMake module for building drivers with Windows Development Kit (WDK).
 
-- [Introduction](#introduction)
-- [Usage](#usage)
-    - [Kernel driver](#kernel-driver)
-- [License](#license)
-- [Version history](#version-history)
+---
 
-# Introduction
+## Introduction
 
-FindWDK makes it possible to build kernel drivers with Windows Driver Kit (WDK) and CMake.
+FindWDK allows building Windows kernel drivers using the WDK and CMake.
 
-Requirements:
+**Requirements:**
 
-- WDK 8.0 and higher.
-- CMake 3.0 and higher.
+* WDK 8.0 or higher
+* CMake 3.0 or higher
+* Ninja build system (recommended)
 
-# Usage
+---
 
-Add FindWDK to the module search path and call `find_package`:
+## Usage
+
+Add the path to `FindWDK.cmake` to your `CMAKE_MODULE_PATH`, then:
 
 ```cmake
+# Specify the path to the WDK libraries if neccessary. 
+set(WDK_LIB_PATH "C:/Program Files (x86)/Windows Kits/10/Lib/10.0.19041.0/km/x64")
+
 list(APPEND CMAKE_MODULE_PATH "<path_to_FindWDK>")
 find_package(WDK REQUIRED)
 ```
 
-FindWDK will search for the latest installed Windows Development Kit (WDK) and expose commands for creating kernel
-drivers and kernel libraries. Also the following variables will be defined:
+**How FindWDK locates libraries:**
 
-- `WDK_FOUND` -- if false, do not try to use WDK
-- `WDK_ROOT` -- where WDK is installed
-- `WDK_VERSION` -- the version of the selected WDK
-- `WDK_WINVER` -- the WINVER used for kernel drivers and libraries (default value is `0x0601` and can be changed per
-  target or globally)
-- `WDK_NTDDI_VERSION` -- the NTDDI_VERSION used for kernel drivers and libraries, if not set, the value will be
-  automatically calculated by WINVER
-- `FINDWDK_DIR` -- the directory where FindWDK.cmake is located
-- `WDKContentRoot` environment variable overrides the default WDK search path.
+* If `WDK_LIB_PATH` is defined, it searches `${WDK_LIB_PATH}/*.lib`.
+* Otherwise, it tries environment variable `WDKContentRoot` and common install locations on C: and D:.
 
-## Kernel driver
+If no `.lib` files are found, configuration fails with an error.
 
-The following command adds a kernel driver target called `<name>` to be built from the source files listed in the
-command invocation:
+---
+
+## Header Library
+
+This project includes a lightweight header library designed to provide essential types, macros, and compiler intrinsics commonly needed for kernel development. It serves as a minimal alternative to Microsoft's official headers, ensuring compatibility with Clang and GCC.
+
+---
+
+## Adding a kernel driver target
+
+Use the function:
 
 ```cmake
-wdk_add_driver(<name>
-        [EXCLUDE_FROM_ALL]
-        [KMDF <kmdf_version>]
-        [WINVER <winver_version>]
-        [NTDDI_VERSION <ntddi_version>]
-        source1 [source2 ...]
-)
+wdk_add_driver(<target_name> source1 [source2 ...])
 ```
 
-Options:
-
-- `EXCLUDE_FROM_ALL` -- exclude from the default build target
-- `KMDF <kmdf_version>` -- use KMDF and set KMDF version
-- `WINVER <winver_version>` -- use specific WINVER version
-- `NTDDI_VERSION <ntddi_version>` -- use specific NTDDI_VERSION
+This creates an executable with `.sys` as an extension, sets compiler and linker flags, links against `WDK::NTOSKRNL` by default, and includes a header library shipped with this project.
 
 Example:
 
 ```cmake
-wdk_add_driver(KmdfCppDriver
-        KMDF 1.15
-        WINVER 0x0602
-        Main.cpp
-)
+wdk_add_driver(${PROJECT_NAME} Main.cpp)
 ```
+
+---
+
+## Linking additional WDK libraries
+
+FindWDK automatically creates imported targets for all WDK `.lib` files found, named `WDK::<LIBNAME_UPPER>`.
+
+To link additional libraries:
 
 ```cmake
-target_link_libraries(KmdfCppDriver WDK::HAL)
+target_link_libraries(${PROJECT_NAME} WDK::FLTMGR)
 ```
 
-## Linking to WDK libraries
+---
 
-By default, **FindWDK** links only against `WDK::NTOSKRNL`.
-However, it also generates imported targets for all available WDK libraries, using the naming convention
-`WDK::<UPPERCASED_LIBNAME>`.
-For example, linking a minifilter driver with `FltMgr.lib` can be done as shown below:
+Let me know if you need further modifications or additional information!
 
-```cmake
-target_link_libraries(MinifilterDriver WDK::FLTMGR)
-```
 
-# License
+## License
 
-FindWDK is licensed under the OSI-approved 3-clause BSD license. You can freely use it in your commercial or opensource
-software.
-Additional components introduced in this fork are licensed under the MIT License, unless otherwise specified.
+Licensed under the OSI-approved 3-clause BSD license. Additional components are under the MIT License.
 
-# Version history
-
-## Version 2.0.0
-
-- Remove msvc support.
-- Add clang and gcc support.
-- Remove the ability to include the headers provided by microsoft as they are obviously not compatible with other
-  compilers or otherwise require a lot of things to be setup properly
-- Add a small header library to provide useful intrinsics and declarations from the wdk.
-
-## ~~Version 1.0.2 (TBD)~~
-
-## ~~Version 1.0.1 (13 Mar 2018)~~
-
-- ~~New: Add ability to link to WDK libraries~~
-- ~~New: Add MinifilterDriver sample~~
-- ~~Fix: W4 warnings in C version of the driver, add missing /W4 /WX for C compiler~~
-
-## ~~Version 1.0.0 (03 Feb 2018)~~
-
-- ~~Initial public release~~
+---

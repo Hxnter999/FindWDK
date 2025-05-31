@@ -1,88 +1,41 @@
-# Redistribution and use is allowed under the OSI-approved 3-clause BSD license.
-# Copyright (c) 2018 Sergey Podobry (sergey.podobry at gmail.com). All rights reserved.
-
-#.rst:
-# FindWDK
-# ----------
-#
-# This module searches for the installed Windows Development Kit (WDK) and
-# exposes commands for creating kernel drivers and kernel libraries.
-#
-# Output variables:
-# - `WDK_FOUND` -- if false, do not try to use WDK
-# - `WDK_ROOT` -- where WDK is installed
-# - `WDK_VERSION` -- the version of the selected WDK
-# - `WDK_WINVER` -- the WINVER used for kernel drivers and libraries
-#       (default value is `0x0601` and can be changed per target or globally)
-# - `WDK_NTDDI_VERSION` -- the NTDDI_VERSION used for kernel drivers and libraries,
-#       if not set, the value will be automatically calculated by WINVER
-#       (default value is left blank and can be changed per target or globally)
-# - `FINDWDK_DIR` -- the directory where FindWDK.cmake is located
-
-
-# Example usage:
-#
-#   find_package(WDK REQUIRED)
-#
-#   wdk_add_driver(KmdfCppDriver KMDF 1.15
-#       Main.cpp
-#   )
-#   target_link_libraries(KmdfCppDriver WDK::HAL)
-#
-
-if (DEFINED ENV{WDKContentRoot})
-    file(GLOB WDK_NTDDK_FILES
-            "$ENV{WDKContentRoot}/Include/*/km/ntddk.h" # WDK 10
-            "$ENV{WDKContentRoot}/Include/km/ntddk.h" # WDK 8.0, 8.1
+if (DEFINED WDK_LIB_PATH)
+    message(STATUS "Using user-defined WDK_LIB_PATH: ${WDK_LIB_PATH}")
+    file(GLOB WDK_LIB_FILES
+            "${WDK_LIB_PATH}/*.lib"
     )
 else ()
-    file(GLOB WDK_NTDDK_FILES
-            "C:/Program Files*/Windows Kits/*/Include/*/km/ntddk.h" # WDK 10
-            "C:/Program Files*/Windows Kits/*/Include/km/ntddk.h" # WDK 8.0, 8.1
-
-            "D:/Program Files*/Windows Kits/*/Include/*/km/ntddk.h" # WDK 10 on D:
-            "D:/Program Files*/Windows Kits/*/Include/km/ntddk.h" # WDK 8.0, 8.1 on D:
-    )
-endif ()
-
-if (WDK_NTDDK_FILES)
-    if (NOT CMAKE_VERSION VERSION_LESS 3.18.0)
-        list(SORT WDK_NTDDK_FILES COMPARE NATURAL) # sort to use the latest available WDK
+    # find the wdk libs if the path is not provided
+    if (DEFINED ENV{WDKContentRoot})
+        file(GLOB WDK_LIB_FILES
+                "$ENV{WDKContentRoot}/Lib/*/km/x64/*.lib"  # WDK 10
+                "$ENV{WDKContentRoot}/Lib/km/x64/*.lib"    # WDK 8.x
+        )
+    else ()
+        file(GLOB WDK_LIB_FILES
+                "C:/Program Files*/Windows Kits/*/Lib/*/km/x64/*.lib"  # WDK 10
+                "C:/Program Files*/Windows Kits/*/Lib/km/x64/*.lib"    # WDK 8.x
+                "D:/Program Files*/Windows Kits/*/Lib/*/km/x64/*.lib"  # WDK 10 on D:
+                "D:/Program Files*/Windows Kits/*/Lib/km/x64/*.lib"    # WDK 8.x on D:
+        )
     endif ()
-
-    list(GET WDK_NTDDK_FILES -1 WDK_LATEST_NTDDK_FILE)
 endif ()
 
-include(FindPackageHandleStandardArgs)
-find_package_handle_standard_args(WDK REQUIRED_VARS WDK_LATEST_NTDDK_FILE)
-
-if (NOT WDK_LATEST_NTDDK_FILE)
-    return()
+if (NOT WDK_LIB_FILES)
+    message(FATAL_ERROR "No WDK .lib files found in the specified paths.")
 endif ()
 
-get_filename_component(WDK_ROOT ${WDK_LATEST_NTDDK_FILE} DIRECTORY)
-get_filename_component(WDK_ROOT ${WDK_ROOT} DIRECTORY)
-get_filename_component(WDK_VERSION ${WDK_ROOT} NAME)
-get_filename_component(WDK_ROOT ${WDK_ROOT} DIRECTORY)
-if (NOT WDK_ROOT MATCHES ".*/[0-9][0-9.]*$") # WDK 10 has a deeper nesting level
-    get_filename_component(WDK_ROOT ${WDK_ROOT} DIRECTORY) # go up once more
-    set(WDK_LIB_VERSION "${WDK_VERSION}")
-    set(WDK_INC_VERSION "${WDK_VERSION}")
-else () # WDK 8.0, 8.1
-    set(WDK_INC_VERSION "")
+list(SORT WDK_NTOSKRNL_LIB COMPARE NATURAL)
 
-    foreach (VERSION winv6.3 win8 win7)
-        if (EXISTS "${WDK_ROOT}/Lib/${VERSION}/")
-            set(WDK_LIB_VERSION "${VERSION}")
-            break()
-        endif ()
-    endforeach ()
+# import targets for all the libraries present in WDK_LIB_FILES
+foreach (LIBRARY_PATH IN LISTS WDK_LIB_FILES)
+    get_filename_component(LIBRARY_NAME_WE ${LIBRARY_PATH} NAME_WE)
+    string(TOUPPER ${LIBRARY_NAME_WE} LIBRARY_NAME_UPPER)
 
-    set(WDK_VERSION "${WDK_LIB_VERSION}")
-endif ()
-
-message(STATUS "WDK_ROOT: " ${WDK_ROOT})
-message(STATUS "WDK_VERSION: " ${WDK_VERSION})
+    add_library(WDK::${LIBRARY_NAME_UPPER} UNKNOWN IMPORTED)
+    set_target_properties(WDK::${LIBRARY_NAME_UPPER} PROPERTIES
+            IMPORTED_LOCATION "${LIBRARY_PATH}"
+    )
+endforeach ()
 
 foreach (_dir ${CMAKE_MODULE_PATH})
     if (EXISTS "${_dir}/FindWDK.cmake")
@@ -95,10 +48,6 @@ endforeach ()
 if (NOT DEFINED FINDWDK_DIR)
     message(WARNING "Failed to find FindWDK.cmake in CMAKE_MODULE_PATH! Did you add the correct directory to CMAKE_MODULE_PATH?")
 endif ()
-
-
-set(WDK_WINVER "0x0601" CACHE STRING "Default WINVER for WDK targets")
-set(WDK_NTDDI_VERSION "" CACHE STRING "Specified NTDDI_VERSION for WDK targets if needed")
 
 set(WDK_COMPILE_FLAGS
         -ffreestanding
@@ -125,17 +74,7 @@ set(WDK_COMPILE_FLAGS
         -Wstrict-aliasing=2
 )
 
-set(WDK_COMPILE_DEFINITIONS "WINNT=1")
-set(WDK_COMPILE_DEFINITIONS_DEBUG "MSC_NOOPT;DEPRECATE_DDK_FUNCTIONS=1;DBG=1")
-
-if (CMAKE_SIZEOF_VOID_P EQUAL 8)
-    list(APPEND WDK_COMPILE_DEFINITIONS "_AMD64_;AMD64;_WIN64")
-    set(WDK_PLATFORM "x64")
-else ()
-    message(FATAL_ERROR "Unsupported architecture")
-endif ()
-
-if (CMAKE_LINKER MATCHES ".*lld-link.*" OR CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
+if (CMAKE_LINKER MATCHES ".*lld-link.*")
     set(USING_LLD_LINK TRUE)
 else ()
     set(USING_LLD_LINK FALSE)
@@ -145,10 +84,12 @@ if (USING_LLD_LINK)
     set(WDK_LINK_FLAGS
             -nostdlib
             -nodefaultlibs
-            "-Xlinker" "/ENTRY:DriverEntry"
+            "-Xlinker"
+            "/ENTRY:DriverEntry"
     )
 else ()
     set(WDK_LINK_FLAGS
+            --target=x86_64-w64-windows-gnu
             -nostdlib
             -nodefaultlibs
             -Wl,-e,DriverEntry
@@ -156,45 +97,23 @@ else ()
     )
 endif ()
 
+function(wdk_add_driver target_name)
+    set(sources ${ARGN})
 
-# Generate imported targets for WDK lib files
-file(GLOB WDK_LIBRARIES "${WDK_ROOT}/Lib/${WDK_LIB_VERSION}/km/${WDK_PLATFORM}/*.lib")
-foreach (LIBRARY IN LISTS WDK_LIBRARIES)
-    get_filename_component(LIBRARY_NAME ${LIBRARY} NAME_WE)
-    string(TOUPPER ${LIBRARY_NAME} LIBRARY_NAME)
-    add_library(WDK::${LIBRARY_NAME} INTERFACE IMPORTED)
-    set_property(TARGET WDK::${LIBRARY_NAME} PROPERTY INTERFACE_LINK_LIBRARIES ${LIBRARY})
-endforeach (LIBRARY)
-unset(WDK_LIBRARIES)
+    add_executable(${target_name} ${sources})
+    set_target_properties(${target_name} PROPERTIES SUFFIX ".sys")
 
-function(wdk_add_driver _target)
-    cmake_parse_arguments(WDK "" "KMDF;WINVER;NTDDI_VERSION" "" ${ARGN})
+    target_compile_options(${target_name} PRIVATE ${WDK_COMPILE_FLAGS})
 
-    add_executable(${_target} ${WDK_UNPARSED_ARGUMENTS})
+    target_link_options(${target_name} PRIVATE ${WDK_LINK_FLAGS})
 
-    set_target_properties(${_target} PROPERTIES SUFFIX ".sys")
-    target_compile_options(${_target} PRIVATE ${WDK_COMPILE_FLAGS})
-
-    target_compile_definitions(${_target} PRIVATE
-            ${WDK_COMPILE_DEFINITIONS}
-            $<$<CONFIG:Debug>:${WDK_COMPILE_DEFINITIONS_DEBUG}>
-            _WIN32_WINNT=${WDK_WINVER}
-    )
-
-    target_link_options(${_target} PRIVATE ${WDK_LINK_FLAGS})
-
-    if (WDK_NTDDI_VERSION)
-        target_compile_definitions(${_target} PRIVATE NTDDI_VERSION=${WDK_NTDDI_VERSION})
-    endif ()
-
-    target_include_directories(${_target} SYSTEM PRIVATE
-            "${WDK_ROOT}/Include/${WDK_INC_VERSION}/shared"
-            "${WDK_ROOT}/Include/${WDK_INC_VERSION}/km"
-            "${FINDWDK_DIR}/include"
-    )
-
-    target_link_libraries(${_target}
+    target_link_libraries(${target_name}
             WDK::NTOSKRNL
-            #WDK::WMILIB
+    )
+    target_include_directories(${target_name} SYSTEM PRIVATE
+            "${FINDWDK_DIR}/include"
+            # removed due to incompatibility
+            # "${WDK_ROOT}/Include/${WDK_INC_VERSION}/shared"
+            # "${WDK_ROOT}/Include/${WDK_INC_VERSION}/km"
     )
 endfunction()
